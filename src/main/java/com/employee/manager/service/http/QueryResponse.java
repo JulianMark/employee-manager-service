@@ -8,16 +8,15 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 
-public class AddResponse {
-
+public class QueryResponse {
     private Byte result;
     private String errorMessage;
 
-    public AddResponse(Byte result) {
+    public QueryResponse(Byte result) {
         this.result = result;
     }
 
-    public AddResponse(String errorMessage) {
+    public QueryResponse(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 }

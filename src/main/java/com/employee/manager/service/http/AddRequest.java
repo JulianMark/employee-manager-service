@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class AddRequest {
-
     private String name;
     private String lastName;
     private String nickname;
