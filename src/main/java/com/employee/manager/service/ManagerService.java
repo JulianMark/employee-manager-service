@@ -19,9 +19,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.employee.manager.Utils.Utils.validateIdNumber;
-import static com.employee.manager.Utils.Utils.validateNotNullOrEmpty;
-import static com.employee.manager.Utils.Utils.validateRequest;
+import static com.employee.manager.utils.Utils.validateIdNumber;
+import static com.employee.manager.utils.Utils.validateNotNullOrEmpty;
+import static com.employee.manager.utils.Utils.validateRequest;
+
 
 @RestController
 @Api(value="Employee Manager WS", produces = MediaType.APPLICATION_JSON_VALUE)

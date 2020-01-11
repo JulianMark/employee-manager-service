@@ -1,4 +1,4 @@
-package com.employee.manager.Utils;
+package com.employee.manager.utils;
 
 import org.springframework.stereotype.Component;
 
