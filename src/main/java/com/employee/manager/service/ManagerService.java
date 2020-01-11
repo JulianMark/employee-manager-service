@@ -5,6 +5,10 @@ import com.employee.manager.mapper.AssignTypeMapper;
 import com.employee.manager.service.http.AddRequest;
 import com.employee.manager.service.http.AssignTypeRequest;
 import com.employee.manager.service.http.QueryResponse;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +24,7 @@ import static com.employee.manager.Utils.Utils.validateNotNullOrEmpty;
 import static com.employee.manager.Utils.Utils.validateRequest;
 
 @RestController
+@Api(value="Employee Manager WS", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ManagerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerService.class);
@@ -35,6 +40,12 @@ public class ManagerService {
     @PostMapping(
             value = "employee/manager/add",
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Agregar empleado al sistema")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = QueryResponse.class),
+            @ApiResponse(code = 400, message = "Argumentos inválidos", response = QueryResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = QueryResponse.class)
+    })
     public ResponseEntity<QueryResponse> addEmployee (@RequestBody AddRequest addRequest){
         try {
             validateRequest(addRequest);
@@ -63,6 +74,12 @@ public class ManagerService {
     @PostMapping(
             value = "employee/manager/assigntype",
             produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Asignar un cargo especifico a un empleado especifico")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = QueryResponse.class),
+            @ApiResponse(code = 400, message = "Argumentos inválidos", response = QueryResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = QueryResponse.class)
+    })
     public ResponseEntity<QueryResponse> assignTypeEmployee (@RequestBody AssignTypeRequest assignTypeRequest){
         try {
             validateRequest(assignTypeRequest);
