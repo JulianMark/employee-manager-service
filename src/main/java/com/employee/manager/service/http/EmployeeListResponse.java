@@ -14,18 +14,18 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeesResponse {
+public class EmployeeListResponse {
 
     @ApiModelProperty(notes="Resultado de la consulta ejecutada exito = lista de empleados")
     private List employeeList;
     @ApiModelProperty(notes="Resultado de la consulta ejecutada exito = mensaje de error")
     private String errorMessage;
 
-    public EmployeesResponse(String errorMessage) {
+    public EmployeeListResponse(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
-    public EmployeesResponse(List employeeList) {
+    public EmployeeListResponse(List employeeList) {
         this.employeeList = employeeList;
     }
 }

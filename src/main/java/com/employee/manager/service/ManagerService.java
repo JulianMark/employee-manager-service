@@ -2,11 +2,12 @@ package com.employee.manager.service;
 
 import com.employee.manager.mapper.AddMapper;
 import com.employee.manager.mapper.AssignTypeMapper;
+import com.employee.manager.mapper.EmployeeListMapper;
 import com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper;
 import com.employee.manager.model.dto.EmployeeDTO;
 import com.employee.manager.service.http.AddRequest;
 import com.employee.manager.service.http.AssignTypeRequest;
-import com.employee.manager.service.http.EmployeesResponse;
+import com.employee.manager.service.http.EmployeeListResponse;
 import com.employee.manager.service.http.QueryResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,12 +38,14 @@ public class ManagerService {
     private final AddMapper addMapper;
     private final AssignTypeMapper assignTypeMapper;
     private final EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper;
+    private final EmployeeListMapper employeeListMapper;
 
     @Autowired
-    public ManagerService(AddMapper addMapper, AssignTypeMapper assignTypeMapper, EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper) {
+    public ManagerService(AddMapper addMapper, AssignTypeMapper assignTypeMapper, EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper, EmployeeListMapper employeeListMapper) {
         this.addMapper = addMapper;
         this.assignTypeMapper = assignTypeMapper;
         this.employeeListWithoutAssignmentMapper = employeeListWithoutAssignmentMapper;
+        this.employeeListMapper = employeeListMapper;
     }
 
     @PostMapping(
@@ -115,24 +118,50 @@ public class ManagerService {
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Consultar lista de empleados sin asignación")
     @ApiResponses({
-            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = EmployeesResponse.class),
-            @ApiResponse(code = 204, message = "No se obtuvieron empleados sin asignacion", response = EmployeesResponse.class),
-            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeesResponse.class)
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = EmployeeListResponse.class),
+            @ApiResponse(code = 204, message = "No se obtuvieron empleados sin asignacion", response = EmployeeListResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
     })
-    public ResponseEntity<EmployeesResponse> obtainEmployeeListWithoutAssignment (){
+    public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
         try {
             List<EmployeeDTO> employeeList= employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment();
             if (employeeList.isEmpty()) {
                 LOGGER.info("There are no employees without assignment");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeesResponse("There are no employees without assignment"));
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse("There are no employees without assignment"));
             }
             LOGGER.info("Employees list without assignment");
-            return ResponseEntity.ok(new EmployeesResponse(employeeList));
+            return ResponseEntity.ok(new EmployeeListResponse(employeeList));
         }catch (Exception ex) {
             LOGGER.error("An error occurred while consulting the list of employees without assignment",ex);
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeesResponse(ex.getMessage()));
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeListResponse(ex.getMessage()));
         }
     }
+
+    @PostMapping(
+            value = "employee/manager/searchEmployee",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Consultar lista de empleados con cierto parametro de busqueda")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = EmployeeListResponse.class),
+            @ApiResponse(code = 204, message = "No se obtuvieron empleados con los parametros de busqueda establecidos", response = EmployeeListResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
+    })
+    public ResponseEntity<EmployeeListResponse> searchEmployee(String param){
+        try {
+            List<EmployeeDTO> employeeList= employeeListMapper.obtainEmployeeList(param);
+            if (employeeList.isEmpty()) {
+                LOGGER.info("There are no employees with the established search parameters");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse("There are no employees without assignment"));
+            }
+            LOGGER.info("Employee list with established search parameter");
+            return ResponseEntity.ok(new EmployeeListResponse(employeeList));
+        }catch (Exception ex) {
+            LOGGER.error("An error occurred while consulting the list of employees without assignment",ex);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeListResponse(ex.getMessage()));
+        }
+    }
+
 
 }

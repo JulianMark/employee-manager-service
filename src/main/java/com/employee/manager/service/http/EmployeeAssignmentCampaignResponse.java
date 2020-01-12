@@ -1,5 +1,4 @@
-package com.employee.manager.model.dto;
-
+package com.employee.manager.service.http;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -11,13 +10,10 @@ import lombok.NoArgsConstructor;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class EmployeeDTO {
+public class EmployeeAssignmentCampaignResponse {
 
-    private Integer id;
     private String name;
     private String lastName;
     private String dni;
-    private Integer idType;
-    private String nameCampaign;
-    private String descriptionOSC;
+
 }

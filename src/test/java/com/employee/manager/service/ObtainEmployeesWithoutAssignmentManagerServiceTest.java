@@ -2,7 +2,7 @@ package com.employee.manager.service;
 
 import com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper;
 import com.employee.manager.model.dto.EmployeeDTO;
-import com.employee.manager.service.http.EmployeesResponse;
+import com.employee.manager.service.http.EmployeeListResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Employees list manager service")
-class ManagerServiceTest {
+class ObtainEmployeesWithoutAssignmentManagerServiceTest {
 
     @Spy
     private List<EmployeeDTO> employeeDTOList;
@@ -51,7 +51,7 @@ class ManagerServiceTest {
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(new ArrayList<>());
 
-        ResponseEntity<EmployeesResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
+        ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 
         assertThat("Status Code Response",
                 responseEntity.getStatusCode(),
@@ -64,20 +64,20 @@ class ManagerServiceTest {
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(null);
 
-        ResponseEntity<EmployeesResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
+        ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 
         assertThat("Status Code Response",
                 responseEntity.getStatusCode(),
-                is(HttpStatus.INTERNAL_SERVER_ERROR));
+                is(HttpStatus.INTERNAL_SERVER_ERROR ));
     }
 
     @Test
-    @DisplayName("When EmployeeListWithoutAssignmentMapper ThrowsException. Should return 200 (OK)")
+    @DisplayName("When obtainEmployeeListWithoutAssignment did not catch exceptions. Should return 200 (OK)")
     public void obtainEmployeeListWithoutAssignment_NoExceptionCaught_ReturnsOk(){
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(employeeDTOList);
 
-        ResponseEntity<EmployeesResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
+        ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 
         assertThat("Status Code Response",
                 responseEntity.getStatusCode(),

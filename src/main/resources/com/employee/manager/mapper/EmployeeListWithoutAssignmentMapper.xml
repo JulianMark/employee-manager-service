@@ -5,7 +5,7 @@
 <mapper namespace="com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper">
 
     <select id="obtainEmployeeListWithoutAssignment" resultType="com.employee.manager.model.dto.EmployeeDTO">
-		SELECT DISTINCT ID, NAME, LASTNAME
+		SELECT DISTINCT ID, NAME, LASTNAME, DNI
 		FROM EMPLOYEES
 		WHERE ID_TYPE_EMPLOYEE IS NULL
 	</select>

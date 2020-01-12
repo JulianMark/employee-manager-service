@@ -25,6 +25,7 @@ class AddEmployeeManagerServiceTest {
 
     private final AddRequest VALID_ADD_REQUEST = new AddRequest("JOHN",
                                                             "DOE",
+                                                            "314343432",
                                                             "JOHNNY",
                                                             "123456");
     @Mock
@@ -50,7 +51,7 @@ class AddEmployeeManagerServiceTest {
     @Test
     @DisplayName("When employee property request is null or empty should return 400 (Bad Request)")
     void addEmployee_PropertyRequestIsNullOrEmpty_ReturnsBadRequest(){
-        AddRequest addRequestWithEmptyProp = new AddRequest("","","","");
+        AddRequest addRequestWithEmptyProp = new AddRequest("","","","","");
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(addRequestWithEmptyProp);
         assertThat("Status Code Response",
                 responseEntity.getStatusCode(),
@@ -68,7 +69,7 @@ class AddEmployeeManagerServiceTest {
     }
 
     @Test
-    @DisplayName("When no Exception is caught should return 200 (OK)")
+    @DisplayName("When addEmployee did not catch exceptions. Should return 200 (OK)")
     void addEmployee_NoExceptionCaught_ReturnsOK(){
         doNothing().when(addMapper).addEmployee(any());
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(VALID_ADD_REQUEST);

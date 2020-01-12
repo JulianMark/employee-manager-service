@@ -65,7 +65,7 @@ class AssignTypeManagerServiceTest {
     }
 
     @Test
-    @DisplayName("When no Exception is caught should return 200 (OK)")
+    @DisplayName("When assignEmployee did not catch exceptions. Should return 200 (OK)")
     void assignEmployee_NoExceptionCaught_ReturnsOK(){
         doNothing().when(assignTypeMapper).assignType(any());
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(VALID_ASSIGN_TYPE_REQUEST);
