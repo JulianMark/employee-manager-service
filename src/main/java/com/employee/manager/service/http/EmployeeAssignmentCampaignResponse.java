@@ -15,5 +15,9 @@ public class EmployeeAssignmentCampaignResponse {
     private String name;
     private String lastName;
     private String dni;
+    private String errorMessage;
 
+    public EmployeeAssignmentCampaignResponse(String errorMessage) {
+        this.errorMessage = errorMessage;
+    }
 }

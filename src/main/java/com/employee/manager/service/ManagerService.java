@@ -2,11 +2,14 @@ package com.employee.manager.service;
 
 import com.employee.manager.mapper.AddMapper;
 import com.employee.manager.mapper.AssignTypeMapper;
+import com.employee.manager.mapper.EmployeeAssignmentCampaignMapper;
 import com.employee.manager.mapper.EmployeeListMapper;
 import com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper;
 import com.employee.manager.model.dto.EmployeeDTO;
 import com.employee.manager.service.http.AddRequest;
 import com.employee.manager.service.http.AssignTypeRequest;
+import com.employee.manager.service.http.EmployeeAssignmentCampaignRequest;
+import com.employee.manager.service.http.EmployeeAssignmentCampaignResponse;
 import com.employee.manager.service.http.EmployeeListResponse;
 import com.employee.manager.service.http.QueryResponse;
 import io.swagger.annotations.Api;
@@ -21,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -39,13 +43,19 @@ public class ManagerService {
     private final AssignTypeMapper assignTypeMapper;
     private final EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper;
     private final EmployeeListMapper employeeListMapper;
+    private final EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper;
 
     @Autowired
-    public ManagerService(AddMapper addMapper, AssignTypeMapper assignTypeMapper, EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper, EmployeeListMapper employeeListMapper) {
+    public ManagerService(AddMapper addMapper,
+                          AssignTypeMapper assignTypeMapper,
+                          EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper,
+                          EmployeeListMapper employeeListMapper,
+                          EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper) {
         this.addMapper = addMapper;
         this.assignTypeMapper = assignTypeMapper;
         this.employeeListWithoutAssignmentMapper = employeeListWithoutAssignmentMapper;
         this.employeeListMapper = employeeListMapper;
+        this.employeeAssignmentCampaignMapper = employeeAssignmentCampaignMapper;
     }
 
     @PostMapping(
@@ -68,7 +78,7 @@ public class ManagerService {
             LOGGER.info("The employee {} {} registered successfully"
                     ,addRequest.getName()
                     ,addRequest.getLastName());
-            return ResponseEntity.ok(new QueryResponse((byte) 0));
+            return ResponseEntity.ok(new QueryResponse((byte) 0,null));
         }catch (IllegalArgumentException iae){
             LOGGER.warn("The parameters entered are not valid: ");
             return ResponseEntity.badRequest().body(new QueryResponse(iae.getMessage()));
@@ -99,7 +109,7 @@ public class ManagerService {
             assignTypeMapper.assignType(assignTypeRequest);
             LOGGER.info("The employee with ID {} was assigned successfully"
                     ,assignTypeRequest.getIdEmployee());
-            return ResponseEntity.ok(new QueryResponse((byte) 0));
+            return ResponseEntity.ok(new QueryResponse((byte) 0,null));
         }catch (IllegalArgumentException iae){
             LOGGER.warn("The parameters entered are not valid: ");
             return ResponseEntity.badRequest().body(new QueryResponse(iae.getMessage()));
@@ -147,12 +157,13 @@ public class ManagerService {
             @ApiResponse(code = 204, message = "No se obtuvieron empleados con los parametros de busqueda establecidos", response = EmployeeListResponse.class),
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
     })
-    public ResponseEntity<EmployeeListResponse> searchEmployee(String param){
+    public ResponseEntity<EmployeeListResponse> searchEmployee(@RequestParam String param){
         try {
             List<EmployeeDTO> employeeList= employeeListMapper.obtainEmployeeList(param);
             if (employeeList.isEmpty()) {
                 LOGGER.info("There are no employees with the established search parameters");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse("There are no employees without assignment"));
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new EmployeeListResponse("There are no employees without assignment"));
             }
             LOGGER.info("Employee list with established search parameter");
             return ResponseEntity.ok(new EmployeeListResponse(employeeList));
@@ -163,5 +174,45 @@ public class ManagerService {
         }
     }
 
-
+    @PostMapping(
+            value = "employee/manager/obtainEmployeeAssignmentCampaign",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Consultar empleado asignado con cierto cargo para una campaña especifica")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base",
+                    response = EmployeeAssignmentCampaignResponse.class),
+            @ApiResponse(code = 204, message = "No se obtuvieron empleados con los parametros de busqueda establecidos",
+                    response = EmployeeAssignmentCampaignResponse.class),
+            @ApiResponse(code = 400, message = "Argumentos inválidos",
+                    response = EmployeeAssignmentCampaignResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web",
+                    response = EmployeeAssignmentCampaignResponse.class)
+    })
+    public ResponseEntity<EmployeeAssignmentCampaignResponse> obtainEmployeeAssignmentCampaign (
+            @RequestBody EmployeeAssignmentCampaignRequest request
+            ){
+        try {
+            validateRequest(request);
+            validateIdNumber(request.getIdType());
+            validateIdNumber(request.getIdCampaign());
+            EmployeeAssignmentCampaignResponse response= employeeAssignmentCampaignMapper
+                    .obtainEmployeeAssignmentCampaign(request);
+            if (response == null) {
+                LOGGER.info("There are no employees with the established search parameters");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT)
+                        .body(new EmployeeAssignmentCampaignResponse("There are no employees with the established search parameters"));
+            }
+            LOGGER.info("Employee list with established search parameter");
+            return ResponseEntity.ok(response);
+        }catch (IllegalArgumentException iae){
+            LOGGER.warn("The parameters entered are not valid: ");
+            return ResponseEntity.badRequest()
+                    .body(new EmployeeAssignmentCampaignResponse(iae.getMessage()));
+        }catch (Exception ex) {
+            LOGGER.error("An error occurred while consulting the assignment of employee for the specific campaign",ex);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new EmployeeAssignmentCampaignResponse(ex.getMessage()));
+        }
+    }
 }

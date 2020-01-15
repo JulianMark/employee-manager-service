@@ -70,6 +70,6 @@ class AssignTypeManagerServiceTest {
         doNothing().when(assignTypeMapper).assignType(any());
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(VALID_ASSIGN_TYPE_REQUEST);
         assertThat(responseEntity.getStatusCode(),is(HttpStatus.OK));
-        assertThat(responseEntity.getBody().getResult(),is(not(nullValue())));
+        assertThat(responseEntity.getBody().getResult(),is((byte)0));
     }
 }

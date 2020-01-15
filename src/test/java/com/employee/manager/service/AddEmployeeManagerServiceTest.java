@@ -74,7 +74,7 @@ class AddEmployeeManagerServiceTest {
         doNothing().when(addMapper).addEmployee(any());
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(VALID_ADD_REQUEST);
         assertThat(responseEntity.getStatusCode(),is(HttpStatus.OK));
-        assertThat(responseEntity.getBody().getResult(),is(not(nullValue())));
+        assertThat(responseEntity.getBody().getResult(),is((byte)0));
     }
 
 

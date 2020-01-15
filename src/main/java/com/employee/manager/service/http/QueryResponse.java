@@ -16,10 +16,6 @@ public class QueryResponse {
     @ApiModelProperty(notes="Mensaje de error, en caso de que falle el WS")
     private String errorMessage;
 
-    public QueryResponse(Byte result) {
-        this.result = result;
-    }
-
     public QueryResponse(String errorMessage) {
         this.errorMessage = errorMessage;
     }
