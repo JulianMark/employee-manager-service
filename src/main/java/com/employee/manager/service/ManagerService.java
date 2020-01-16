@@ -5,13 +5,14 @@ import com.employee.manager.mapper.AssignTypeMapper;
 import com.employee.manager.mapper.EmployeeAssignmentCampaignMapper;
 import com.employee.manager.mapper.EmployeeListMapper;
 import com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper;
-import com.employee.manager.model.dto.EmployeeDTO;
 import com.employee.manager.service.http.AddRequest;
 import com.employee.manager.service.http.AssignTypeRequest;
 import com.employee.manager.service.http.EmployeeAssignmentCampaignRequest;
 import com.employee.manager.service.http.EmployeeAssignmentCampaignResponse;
 import com.employee.manager.service.http.EmployeeListResponse;
 import com.employee.manager.service.http.QueryResponse;
+import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
+import com.employee.manager.utils.validators.ListValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -27,11 +28,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Optional;
 
-import static com.employee.manager.utils.Utils.validateIdNumber;
-import static com.employee.manager.utils.Utils.validateNotNullOrEmpty;
-import static com.employee.manager.utils.Utils.validateRequest;
+import static com.employee.manager.utils.validators.request.AddRequestValidator.validateAddRequest;
+import static com.employee.manager.utils.validators.request.AssignTypeRequestValidator.validateAssignTypeRequest;
+import static com.employee.manager.utils.validators.request.EmployeeAssignmentRequestValidator.validateEmployeeAssignmentRequest;
 
 
 @RestController
@@ -44,18 +45,24 @@ public class ManagerService {
     private final EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper;
     private final EmployeeListMapper employeeListMapper;
     private final EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper;
+    private final ListValidator listValidator;
+    private final EmployeeAssignmentValidator employeeAssignmentValidator;
 
     @Autowired
     public ManagerService(AddMapper addMapper,
                           AssignTypeMapper assignTypeMapper,
                           EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper,
                           EmployeeListMapper employeeListMapper,
-                          EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper) {
+                          EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper,
+                          ListValidator listValidator,
+                          EmployeeAssignmentValidator employeeAssignmentValidator) {
         this.addMapper = addMapper;
         this.assignTypeMapper = assignTypeMapper;
         this.employeeListWithoutAssignmentMapper = employeeListWithoutAssignmentMapper;
         this.employeeListMapper = employeeListMapper;
         this.employeeAssignmentCampaignMapper = employeeAssignmentCampaignMapper;
+        this.listValidator = listValidator;
+        this.employeeAssignmentValidator = employeeAssignmentValidator;
     }
 
     @PostMapping(
@@ -69,11 +76,7 @@ public class ManagerService {
     })
     public ResponseEntity<QueryResponse> addEmployee (@RequestBody AddRequest addRequest){
         try {
-            validateRequest(addRequest);
-            validateNotNullOrEmpty(addRequest.getName());
-            validateNotNullOrEmpty(addRequest.getLastName());
-            validateNotNullOrEmpty(addRequest.getNickname());
-            validateNotNullOrEmpty(addRequest.getPassword());
+            validateAddRequest(addRequest);
             addMapper.addEmployee(addRequest);
             LOGGER.info("The employee {} {} registered successfully"
                     ,addRequest.getName()
@@ -93,7 +96,7 @@ public class ManagerService {
     }
 
     @PostMapping(
-            value = "employee/manager/assigntype",
+            value = "employee/manager/assignType",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Asignar un cargo especifico a un empleado especifico")
     @ApiResponses({
@@ -103,9 +106,7 @@ public class ManagerService {
     })
     public ResponseEntity<QueryResponse> assignTypeEmployee (@RequestBody AssignTypeRequest assignTypeRequest){
         try {
-            validateRequest(assignTypeRequest);
-            validateIdNumber(assignTypeRequest.getIdType());
-            validateIdNumber(assignTypeRequest.getIdEmployee());
+            validateAssignTypeRequest(assignTypeRequest);
             assignTypeMapper.assignType(assignTypeRequest);
             LOGGER.info("The employee with ID {} was assigned successfully"
                     ,assignTypeRequest.getIdEmployee());
@@ -134,13 +135,9 @@ public class ManagerService {
     })
     public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
         try {
-            List<EmployeeDTO> employeeList= employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment();
-            if (employeeList.isEmpty()) {
-                LOGGER.info("There are no employees without assignment");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse("There are no employees without assignment"));
-            }
-            LOGGER.info("Employees list without assignment");
-            return ResponseEntity.ok(new EmployeeListResponse(employeeList));
+            return Optional.ofNullable(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
+                    .map(listValidator.obtainEmployeeListValidator())
+                    .orElseGet(listValidator.obtainEmptyList());
         }catch (Exception ex) {
             LOGGER.error("An error occurred while consulting the list of employees without assignment",ex);
             return ResponseEntity
@@ -159,16 +156,11 @@ public class ManagerService {
     })
     public ResponseEntity<EmployeeListResponse> searchEmployee(@RequestParam String param){
         try {
-            List<EmployeeDTO> employeeList= employeeListMapper.obtainEmployeeList(param);
-            if (employeeList.isEmpty()) {
-                LOGGER.info("There are no employees with the established search parameters");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new EmployeeListResponse("There are no employees without assignment"));
-            }
-            LOGGER.info("Employee list with established search parameter");
-            return ResponseEntity.ok(new EmployeeListResponse(employeeList));
+            return Optional.ofNullable(employeeListMapper.obtainEmployeeList(param))
+                    .map(listValidator.obtainEmployeeListValidator())
+                    .orElseGet(listValidator.obtainEmptyList());
         }catch (Exception ex) {
-            LOGGER.error("An error occurred while consulting the list of employees without assignment",ex);
+            LOGGER.error("An error occurred while consulting the list of employees with assignment",ex);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeListResponse(ex.getMessage()));
         }
@@ -192,20 +184,12 @@ public class ManagerService {
             @RequestBody EmployeeAssignmentCampaignRequest request
             ){
         try {
-            validateRequest(request);
-            validateIdNumber(request.getIdType());
-            validateIdNumber(request.getIdCampaign());
-            EmployeeAssignmentCampaignResponse response= employeeAssignmentCampaignMapper
-                    .obtainEmployeeAssignmentCampaign(request);
-            if (response == null) {
-                LOGGER.info("There are no employees with the established search parameters");
-                return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new EmployeeAssignmentCampaignResponse("There are no employees with the established search parameters"));
-            }
-            LOGGER.info("Employee list with established search parameter");
-            return ResponseEntity.ok(response);
+            validateEmployeeAssignmentRequest(request);
+            return Optional.ofNullable(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(request))
+                    .map(employeeAssignmentValidator.obtainEmployeeAssignmentValidator())
+                    .orElseGet(employeeAssignmentValidator.obtainEmptyEmployeeAssignment());
         }catch (IllegalArgumentException iae){
-            LOGGER.warn("The parameters entered are not valid: ");
+            LOGGER.warn("The parameters entered are not valid");
             return ResponseEntity.badRequest()
                     .body(new EmployeeAssignmentCampaignResponse(iae.getMessage()));
         }catch (Exception ex) {

@@ -13,9 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -43,8 +41,7 @@ class AddEmployeeManagerServiceTest {
     @DisplayName("When employee request is null should return 400 (Bad Request)")
     void addEmployee_RequestIsNull_ReturnsBadRequest(){
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(null);
-        assertThat("Status Code Response",
-                responseEntity.getStatusCode(),
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
     }
 
@@ -53,8 +50,7 @@ class AddEmployeeManagerServiceTest {
     void addEmployee_PropertyRequestIsNullOrEmpty_ReturnsBadRequest(){
         AddRequest addRequestWithEmptyProp = new AddRequest("","","","","");
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(addRequestWithEmptyProp);
-        assertThat("Status Code Response",
-                responseEntity.getStatusCode(),
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
     }
 
@@ -63,8 +59,7 @@ class AddEmployeeManagerServiceTest {
     void addEmployee_AddMapperThrowException_ReturnsInternalServerError(){
         doThrow(new RuntimeException()).when(addMapper).addEmployee(any());
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(VALID_ADD_REQUEST);
-        assertThat("Status Code Response",
-                responseEntity.getStatusCode(),
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 

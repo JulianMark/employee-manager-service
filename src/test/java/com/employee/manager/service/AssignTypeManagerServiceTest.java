@@ -39,8 +39,7 @@ class AssignTypeManagerServiceTest {
     @DisplayName("When assign type request is null should return 400 (Bad Request)")
     void assignEmployee_RequestIsNull_ReturnsBadRequest(){
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(null);
-        assertThat("Status Code Response",
-                responseEntity.getStatusCode(),
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
     }
 
@@ -49,8 +48,7 @@ class AssignTypeManagerServiceTest {
     void assignEmployee_PropertyRequestIsNullOrLessThanZero_ReturnsBadRequest(){
         AssignTypeRequest assignTypeRequestWithEmptyProp = new AssignTypeRequest(null,0);
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(assignTypeRequestWithEmptyProp);
-        assertThat("Status Code Response",
-                responseEntity.getStatusCode(),
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
     }
 
@@ -59,8 +57,7 @@ class AssignTypeManagerServiceTest {
     void assignEmployee_AssignTypeMapperThrowException_ReturnsInternalServerError(){
         doThrow(new RuntimeException()).when(assignTypeMapper).assignType(any());
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(VALID_ASSIGN_TYPE_REQUEST);
-        assertThat("Status Code Response",
-                responseEntity.getStatusCode(),
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 

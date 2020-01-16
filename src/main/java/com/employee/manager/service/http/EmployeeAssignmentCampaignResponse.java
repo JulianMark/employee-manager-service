@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class EmployeeAssignmentCampaignResponse {
 
+    private Integer id;
     private String name;
     private String lastName;
     private String dni;

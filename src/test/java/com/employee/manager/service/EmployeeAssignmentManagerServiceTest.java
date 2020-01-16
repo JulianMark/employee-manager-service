@@ -3,8 +3,7 @@ package com.employee.manager.service;
 import com.employee.manager.mapper.EmployeeAssignmentCampaignMapper;
 import com.employee.manager.service.http.EmployeeAssignmentCampaignRequest;
 import com.employee.manager.service.http.EmployeeAssignmentCampaignResponse;
-import com.employee.manager.service.http.EmployeeListResponse;
-import com.employee.manager.service.http.QueryResponse;
+import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,19 +13,20 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class ManagerServiceTest {
+class EmployeeAssignmentManagerServiceTest {
 
     private final EmployeeAssignmentCampaignRequest VALID_REQUEST = new EmployeeAssignmentCampaignRequest(2,1);
 
     @Mock
     private EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper;
+
+    @Mock
+    private EmployeeAssignmentValidator employeeAssignmentValidator;
 
     @InjectMocks
     private ManagerService sut;
@@ -71,8 +71,12 @@ class ManagerServiceTest {
     @Test
     @DisplayName("When obtainEmployeeList is empty. Should return 204 (No Content)")
     public void obtainEmployeeListWithoutAssignment_EmployeeListIsEmpty_ReturnsNoContent(){
+        EmployeeAssignmentCampaignResponse response = new EmployeeAssignmentCampaignResponse();
         when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
-                .thenReturn(null);
+                .thenReturn(response);
+        when(employeeAssignmentValidator.obtainEmployeeAssignmentValidator())
+                .thenReturn(employeeAssignmentCampaignResponse -> ResponseEntity
+                        .status(HttpStatus.NO_CONTENT).body(response));
 
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut
                 .obtainEmployeeAssignmentCampaign(VALID_REQUEST);
@@ -97,14 +101,20 @@ class ManagerServiceTest {
     @Test
     @DisplayName("When obtainEmployeeAssignmentCampaign did not catch exceptions. Should return 200 (OK)")
     public void obtainEmployeeAssignmentCampaign_NoExceptionCaught_ReturnsOk(){
+        final EmployeeAssignmentCampaignResponse employeeResponse = new EmployeeAssignmentCampaignResponse(
+                1, "JUAN", "PEREZ", "35797912", null);
         when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
-                .thenReturn(new EmployeeAssignmentCampaignResponse("test"));
+                .thenReturn(employeeResponse);
+        when(employeeAssignmentValidator.obtainEmployeeAssignmentValidator())
+                .thenReturn(employeeAssignmentCampaignResponse -> ResponseEntity
+                        .status(HttpStatus.OK).body(employeeResponse));
 
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut
                 .obtainEmployeeAssignmentCampaign(VALID_REQUEST);
 
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.OK));
+        assertThat(responseEntity.getBody().getId(),is(employeeResponse.getId()));
     }
 
 }
