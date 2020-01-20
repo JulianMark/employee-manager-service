@@ -20,4 +20,12 @@ public class EmployeeDTO {
     private Integer idType;
     private String nameCampaign;
     private String descriptionOSC;
+
+    public EmployeeDTO(Integer id, String name, String lastName, String dni, Integer idType) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.dni = dni;
+        this.idType = idType;
+    }
 }

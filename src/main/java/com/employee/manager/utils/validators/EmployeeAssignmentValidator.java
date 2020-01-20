@@ -22,7 +22,6 @@ public class EmployeeAssignmentValidator {
 
     ResponseEntity<EmployeeAssignmentCampaignResponse> obtainEmployeeAssignment(
             EmployeeAssignmentCampaignResponse employeeAssignmentCampaignResponse) {
-
         LOGGER.info("The employee {} {} was obtained"
                 ,employeeAssignmentCampaignResponse.getName()
                 ,employeeAssignmentCampaignResponse.getLastName());
@@ -35,5 +34,4 @@ public class EmployeeAssignmentValidator {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeAssignmentCampaignResponse());
         };
     }
-
 }

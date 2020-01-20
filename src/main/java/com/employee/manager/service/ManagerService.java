@@ -136,12 +136,16 @@ public class ManagerService {
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
     })
     public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
-        return Optional.of(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
-                    .map(listValidator.obtainEmployeeListValidator())
-                    .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees without assignment"));
+        try{
+            return Optional.of(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
+                        .map(listValidator.obtainEmployeeListValidator())
+                        .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
+        }catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new EmployeeListResponse(ex.getMessage()));
+        }
 
     }
-
 
     @PostMapping(
             value = "employee/manager/obtainEmployeeAssignmentCampaign",
