@@ -23,14 +23,11 @@ public class ListValidator {
     }
 
     ResponseEntity<EmployeeListResponse> obtainList(List<EmployeeDTO> list) {
-        LOGGER.info("List of {} employees was obtained", list.size());
-        return ResponseEntity.ok(new EmployeeListResponse(list));
-    }
-
-    public Supplier<ResponseEntity<EmployeeListResponse>> obtainEmptyList() {
-        return () -> {
-            LOGGER.warn("There are no employees with the established search parameters");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse(Collections.emptyList()));
-        };
+        if(!list.isEmpty()){
+            LOGGER.info("List of {} employees was obtained", list.size());
+            return ResponseEntity.ok(new EmployeeListResponse(list));
+        }
+        LOGGER.warn("There are no employees with the established search parameters");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse(Collections.emptyList()));
     }
 }

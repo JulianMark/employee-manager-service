@@ -6,7 +6,7 @@
 
     <select id="obtainEmployeeListWithoutAssignment" resultType="com.employee.manager.model.dto.EmployeeDTO">
 		SELECT DISTINCT ID, NAME, LASTNAME, DNI
-		FROM EMPLOYEES
+		FROM EMPLOYEE
 		WHERE ID_TYPE_EMPLOYEE IS NULL
 	</select>
 

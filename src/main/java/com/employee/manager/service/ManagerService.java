@@ -5,6 +5,7 @@ import com.employee.manager.mapper.AssignTypeMapper;
 import com.employee.manager.mapper.EmployeeAssignmentCampaignMapper;
 import com.employee.manager.mapper.EmployeeListMapper;
 import com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper;
+import com.employee.manager.model.dto.EmployeeDTO;
 import com.employee.manager.service.http.AddRequest;
 import com.employee.manager.service.http.AssignTypeRequest;
 import com.employee.manager.service.http.EmployeeAssignmentCampaignRequest;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.employee.manager.utils.validators.request.AddRequestValidator.validateAddRequest;
@@ -134,37 +136,12 @@ public class ManagerService {
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
     })
     public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
-        try {
-            return Optional.ofNullable(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
+        return Optional.of(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                     .map(listValidator.obtainEmployeeListValidator())
-                    .orElseGet(listValidator.obtainEmptyList());
-        }catch (Exception ex) {
-            LOGGER.error("An error occurred while consulting the list of employees without assignment",ex);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeListResponse(ex.getMessage()));
-        }
+                    .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees without assignment"));
+
     }
 
-    @PostMapping(
-            value = "employee/manager/searchEmployee",
-            produces = MediaType.APPLICATION_JSON_VALUE)
-    @ApiOperation("Consultar lista de empleados con cierto parametro de busqueda")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = EmployeeListResponse.class),
-            @ApiResponse(code = 204, message = "No se obtuvieron empleados con los parametros de busqueda establecidos", response = EmployeeListResponse.class),
-            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
-    })
-    public ResponseEntity<EmployeeListResponse> searchEmployee(@RequestParam String param){
-        try {
-            return Optional.ofNullable(employeeListMapper.obtainEmployeeList(param))
-                    .map(listValidator.obtainEmployeeListValidator())
-                    .orElseGet(listValidator.obtainEmptyList());
-        }catch (Exception ex) {
-            LOGGER.error("An error occurred while consulting the list of employees with assignment",ex);
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new EmployeeListResponse(ex.getMessage()));
-        }
-    }
 
     @PostMapping(
             value = "employee/manager/obtainEmployeeAssignmentCampaign",
