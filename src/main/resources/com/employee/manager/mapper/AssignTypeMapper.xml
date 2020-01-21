@@ -6,7 +6,9 @@
 
     <update id="assignType">
         UPDATE EMPLOYEES
-        SET ID_TYPE_EMPLOYEE = #{assignTypeRequest.idType}
+        SET
+        ID_TYPE_EMPLOYEE = #{assignTypeRequest.idType},
+        LAST_UPDATE = SYSDATE
         WHERE ID = #{assignTypeRequest.idEmployee};
     </update>
 

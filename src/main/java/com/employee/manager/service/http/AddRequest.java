@@ -1,5 +1,6 @@
 package com.employee.manager.service.http;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -13,8 +14,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 
 public class AddRequest {
+
+    @ApiModelProperty(notes="Nombre del empleado a ingresar", required = true, example = "JOHN")
     private String name;
+    @ApiModelProperty(notes="Apellido del empleado a ingresar", required = true, example = "DOU")
     private String lastName;
+    @ApiModelProperty(notes="Numero de identidad del empleado a ingresar", required = true, example = "356546465")
+    private String dni;
+    @ApiModelProperty(notes="Nickname del empleado a ingresar", required = true, example = "JOHNNY")
     private String nickname;
+    @ApiModelProperty(notes="Password del empleado a ingresar", required = true, example = "ABC123456")
     private String password;
 }

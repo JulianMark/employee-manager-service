@@ -1,15 +1,14 @@
-package com.employee.manager.Utils;
+package com.employee.manager.utils;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.employee.manager.Utils.Utils.validateIdNumber;
-import static com.employee.manager.Utils.Utils.validateNotNullOrEmpty;
-import static com.employee.manager.Utils.Utils.validateRequest;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.employee.manager.utils.Utils.validateIdNumber;
+import static com.employee.manager.utils.Utils.validateNotNullOrEmpty;
+import static com.employee.manager.utils.Utils.validateRequest;
 
-@DisplayName("Utils class")
+@DisplayName("Method utils test")
 class UtilsTest {
 
     @Test
