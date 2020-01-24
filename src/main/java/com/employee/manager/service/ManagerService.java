@@ -1,17 +1,9 @@
 package com.employee.manager.service;
 
-import com.employee.manager.mapper.AddMapper;
-import com.employee.manager.mapper.AssignTypeMapper;
-import com.employee.manager.mapper.EmployeeAssignmentCampaignMapper;
-import com.employee.manager.mapper.EmployeeListMapper;
-import com.employee.manager.mapper.EmployeeListWithoutAssignmentMapper;
-import com.employee.manager.model.dto.EmployeeDTO;
-import com.employee.manager.service.http.AddRequest;
-import com.employee.manager.service.http.AssignTypeRequest;
-import com.employee.manager.service.http.EmployeeAssignmentCampaignRequest;
-import com.employee.manager.service.http.EmployeeAssignmentCampaignResponse;
-import com.employee.manager.service.http.EmployeeListResponse;
-import com.employee.manager.service.http.QueryResponse;
+import com.employee.manager.mapper.*;
+import com.employee.manager.model.dto.EmployeeCampaignDTO;
+import com.employee.manager.service.http.*;
+import com.employee.manager.utils.validators.CampaignEmployeesValidator;
 import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
 import com.employee.manager.utils.validators.ListValidator;
 import io.swagger.annotations.Api;
@@ -24,12 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.employee.manager.utils.validators.request.AddRequestValidator.validateAddRequest;
@@ -47,8 +35,10 @@ public class ManagerService {
     private final EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper;
     private final EmployeeListMapper employeeListMapper;
     private final EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper;
+    private final CampaignEmployeesMapper campaignEmployeesMapper;
     private final ListValidator listValidator;
     private final EmployeeAssignmentValidator employeeAssignmentValidator;
+    private final CampaignEmployeesValidator campaignEmployeesValidator;
 
     @Autowired
     public ManagerService(AddMapper addMapper,
@@ -56,15 +46,17 @@ public class ManagerService {
                           EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper,
                           EmployeeListMapper employeeListMapper,
                           EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper,
-                          ListValidator listValidator,
-                          EmployeeAssignmentValidator employeeAssignmentValidator) {
+                          CampaignEmployeesMapper campaignEmployeesMapper, ListValidator listValidator,
+                          EmployeeAssignmentValidator employeeAssignmentValidator, CampaignEmployeesValidator campaignEmployeesValidator) {
         this.addMapper = addMapper;
         this.assignTypeMapper = assignTypeMapper;
         this.employeeListWithoutAssignmentMapper = employeeListWithoutAssignmentMapper;
         this.employeeListMapper = employeeListMapper;
         this.employeeAssignmentCampaignMapper = employeeAssignmentCampaignMapper;
+        this.campaignEmployeesMapper = campaignEmployeesMapper;
         this.listValidator = listValidator;
         this.employeeAssignmentValidator = employeeAssignmentValidator;
+        this.campaignEmployeesValidator = campaignEmployeesValidator;
     }
 
     @PostMapping(
@@ -178,6 +170,34 @@ public class ManagerService {
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmployeeAssignmentCampaignResponse(ex.getMessage()));
+        }
+    }
+
+    @CrossOrigin(origins = "http://localhost:3000", maxAge = 3600)
+    @PostMapping(
+            value = "employee/manager/obtainStatusCampaign",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Consultar los empleados de una campaña especifica")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base",
+                    response = EmployeeAssignmentCampaignResponse.class),
+            @ApiResponse(code = 204, message = "No se obtuvieron datos de la campaña especifica",
+                    response = EmployeeAssignmentCampaignResponse.class),
+            @ApiResponse(code = 400, message = "Argumentos inválidos",
+                    response = EmployeeAssignmentCampaignResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web",
+                    response = EmployeeAssignmentCampaignResponse.class)
+    })
+    public ResponseEntity<CampaignEmployeesResponse> obtainStatusCampaign(@RequestBody CampaignStatusRequest request){
+        try{
+            return Optional.ofNullable(campaignEmployeesMapper.obtainCampaignEmployees(request.getIdCampaign()))
+                    .map(campaignEmployeesValidator.obtainCampaignEmployeesValidator())
+                    .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
+        }catch (Exception ex) {
+            LOGGER.error("An error occurred while consulting the employees for the specific campaign",ex);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CampaignEmployeesResponse(ex.getMessage()));
         }
     }
 }

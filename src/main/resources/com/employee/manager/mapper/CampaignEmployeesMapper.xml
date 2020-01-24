@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.employee.manager.mapper.CampaignEmployeesMapper">
+
+    <select id="obtainCampaignEmployees" resultType="com.employee.manager.model.dto.EmployeeCampaignDTO">
+		SELECT E.ID, E.NAME, E.LASTNAME,
+			(SELECT COUNT (D.ID)
+				FROM DONATIONS D
+				WHERE D.ID_CAMPAIGN = TE.ID_CAMPAIGN
+				AND D.ID_EMPLOYEE_TEAM = E.ID) TOTALDONATIONS,
+			(SELECT SUM (D.AMOUNT)
+				FROM DONATIONS D
+				WHERE D.ID_CAMPAIGN = TE.ID_CAMPAIGN
+				AND D.ID_EMPLOYEE_TEAM = E.ID) TOTALAMOUNTDONATIONS,
+			(SELECT SUM (DR.PRODUCTIVE_HOURS)
+				FROM DAILY_RECORDS DR
+				WHERE DR.ID_CAMPAIGN = TE.ID_CAMPAIGN
+				AND DR.ID_EMPLOYEE_TEAM = E.ID) TOTALPRODUCTIVEHOURS,
+			(SELECT SUM (DR.NON_PRODUCTIVE_HOURS)
+				FROM DAILY_RECORDS DR
+				WHERE DR.ID_CAMPAIGN = TE.ID_CAMPAIGN
+				AND DR.ID_EMPLOYEE_TEAM = E.ID) TOTALNONPRODUCTIVEHOURS,
+			TE.INITIAL_DATE INITIALDATE,
+			TE.FINAL_DATE FINALDATE
+		FROM EMPLOYEES E
+				 JOIN TEAM_EMPLOYEES TE ON TE.ID_EMPLOYEE = E.ID
+		WHERE TE.ID_CAMPAIGN = #{idCampaign}
+	</select>
+
+</mapper>
