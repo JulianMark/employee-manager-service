@@ -21,8 +21,9 @@ public class CampaignEmployeesBuilder implements Function<List<EmployeeCampaignD
     public List<EmployeeCampaign> apply(List<EmployeeCampaignDTO> employeeListCampaignDTO) {
          return employeeListCampaignDTO
                 .stream()
+                 .filter(employeeCampaignDTO -> (employeeCampaignDTO.getName() != null
+                         && employeeCampaignDTO.getLastName() != null))
                 .map(dto -> employeeCampaignBuilder.apply(dto))
-                .filter(employeeCampaign -> employeeCampaign != null)
                 .collect(Collectors.toList());
     }
 }

@@ -1,7 +1,6 @@
 package com.employee.manager.service;
 
 import com.employee.manager.mapper.*;
-import com.employee.manager.model.dto.EmployeeCampaignDTO;
 import com.employee.manager.service.http.*;
 import com.employee.manager.utils.validators.CampaignEmployeesValidator;
 import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
@@ -130,13 +129,12 @@ public class ManagerService {
     public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
         try{
             return Optional.of(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
-                        .map(listValidator.obtainEmployeeListValidator())
+                        .map(listValidator)
                         .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmployeeListResponse(ex.getMessage()));
         }
-
     }
 
     @PostMapping(
@@ -191,7 +189,7 @@ public class ManagerService {
     public ResponseEntity<CampaignEmployeesResponse> obtainStatusCampaign(@RequestBody CampaignStatusRequest request){
         try{
             return Optional.ofNullable(campaignEmployeesMapper.obtainCampaignEmployees(request.getIdCampaign()))
-                    .map(campaignEmployeesValidator.obtainCampaignEmployeesValidator())
+                    .map(campaignEmployeesValidator)
                     .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
         }catch (Exception ex) {
             LOGGER.error("An error occurred while consulting the employees for the specific campaign",ex);
