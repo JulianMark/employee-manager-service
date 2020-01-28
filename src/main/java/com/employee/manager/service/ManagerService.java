@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+import static com.employee.manager.utils.Utils.validateIdNumber;
 import static com.employee.manager.utils.validators.request.AddRequestValidator.validateAddRequest;
 import static com.employee.manager.utils.validators.request.AssignTypeRequestValidator.validateAssignTypeRequest;
 import static com.employee.manager.utils.validators.request.EmployeeAssignmentRequestValidator.validateEmployeeAssignmentRequest;
@@ -188,6 +189,7 @@ public class ManagerService {
     })
     public ResponseEntity<CampaignEmployeesResponse> obtainStatusCampaign(@RequestBody CampaignStatusRequest request){
         try{
+            validateIdNumber(request.getIdCampaign());
             return Optional.ofNullable(campaignEmployeesMapper.obtainCampaignEmployees(request.getIdCampaign()))
                     .map(campaignEmployeesValidator)
                     .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));

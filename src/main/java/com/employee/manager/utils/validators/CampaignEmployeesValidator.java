@@ -4,6 +4,7 @@ import com.employee.manager.builder.CampaignEmployeesBuilder;
 import com.employee.manager.model.EmployeeCampaign;
 import com.employee.manager.model.dto.EmployeeCampaignDTO;
 import com.employee.manager.service.http.CampaignEmployeesResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,7 @@ public class CampaignEmployeesValidator implements Function<List<EmployeeCampaig
 
     private final CampaignEmployeesBuilder campaignEmployeesBuilder;
 
+    @Autowired
     public CampaignEmployeesValidator(CampaignEmployeesBuilder campaignEmployeesBuilder) {
         this.campaignEmployeesBuilder = campaignEmployeesBuilder;
     }

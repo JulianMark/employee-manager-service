@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Employees list manager service")
-class ObtainEmployeesWithoutAssignmentManagerServiceTest {
+class EmployeesWithoutAssignmentManagerServiceTest {
 
     @Spy
     private List<EmployeeDTO> employeeDTOList;
