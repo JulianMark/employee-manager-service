@@ -6,11 +6,18 @@ import com.employee.manager.service.http.QueryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -37,6 +44,23 @@ class AddEmployeeManagerServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
+    @ParameterizedTest
+    @ArgumentsSource(RequestArgumentsSource.class)
+    @DisplayName("When employee request is null Or Empty should return 400 (Bad Request)")
+    void addEmployee_PropertyRequestIsNullOrEmpty_ReturnsBadRequest2(AddRequest request){
+        ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(request);
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
+                is(HttpStatus.BAD_REQUEST));
+    }
+
+    class RequestArgumentsSource implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(Arguments.of((AddRequest) null),Arguments.of(new AddRequest("","","","","")));
+        }
+    }
+/*
     @Test
     @DisplayName("When employee request is null should return 400 (Bad Request)")
     void addEmployee_RequestIsNull_ReturnsBadRequest(){
@@ -53,6 +77,7 @@ class AddEmployeeManagerServiceTest {
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
     }
+*/
 
     @Test
     @DisplayName("When addMapper throws Exception should return 500 (Internal Server Error)")

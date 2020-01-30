@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class CampaignEmployeesValidator {
+public class CampaignEmployeesValidator implements Function<List<EmployeeCampaignDTO>, ResponseEntity<CampaignEmployeesResponse>>{
 
     private final CampaignEmployeesBuilder campaignEmployeesBuilder;
 
@@ -24,6 +24,15 @@ public class CampaignEmployeesValidator {
     }
 
     private ResponseEntity<CampaignEmployeesResponse> obtainCampaignEmployees(List<EmployeeCampaignDTO> employeeCampaignDTOS) {
+        if (!employeeCampaignDTOS.isEmpty()){
+            List<EmployeeCampaign> listResponse = campaignEmployeesBuilder.apply(employeeCampaignDTOS);
+            return ResponseEntity.ok(new CampaignEmployeesResponse(listResponse));
+        }
+        return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<CampaignEmployeesResponse> apply(List<EmployeeCampaignDTO> employeeCampaignDTOS) {
         if (!employeeCampaignDTOS.isEmpty()){
             List<EmployeeCampaign> listResponse = campaignEmployeesBuilder.apply(employeeCampaignDTOS);
             return ResponseEntity.ok(new CampaignEmployeesResponse(listResponse));
