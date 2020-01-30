@@ -1,7 +1,6 @@
 package com.employee.manager.service;
 
 import com.employee.manager.mapper.*;
-import com.employee.manager.model.dto.EmployeeCampaignDTO;
 import com.employee.manager.service.http.*;
 import com.employee.manager.utils.validators.CampaignEmployeesValidator;
 import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+import static com.employee.manager.utils.Utils.validateIdNumber;
 import static com.employee.manager.utils.validators.request.AddRequestValidator.validateAddRequest;
 import static com.employee.manager.utils.validators.request.AssignTypeRequestValidator.validateAssignTypeRequest;
 import static com.employee.manager.utils.validators.request.EmployeeAssignmentRequestValidator.validateEmployeeAssignmentRequest;
@@ -130,13 +130,12 @@ public class ManagerService {
     public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
         try{
             return Optional.of(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
-                        .map(listValidator.obtainEmployeeListValidator())
+                        .map(listValidator)
                         .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
         }catch (Exception ex){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmployeeListResponse(ex.getMessage()));
         }
-
     }
 
     @PostMapping(
@@ -190,6 +189,7 @@ public class ManagerService {
     })
     public ResponseEntity<CampaignEmployeesResponse> obtainStatusCampaign(@RequestBody CampaignStatusRequest request){
         try{
+            validateIdNumber(request.getIdCampaign());
             return Optional.ofNullable(campaignEmployeesMapper.obtainCampaignEmployees(request.getIdCampaign()))
                     .map(campaignEmployeesValidator)
                     .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));

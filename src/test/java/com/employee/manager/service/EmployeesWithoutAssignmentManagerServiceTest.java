@@ -23,7 +23,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Employees list manager service")
-class ObtainEmployeesWithoutAssignmentManagerServiceTest {
+class EmployeesWithoutAssignmentManagerServiceTest {
 
     @Spy
     private List<EmployeeDTO> employeeDTOList;
@@ -51,9 +51,8 @@ class ObtainEmployeesWithoutAssignmentManagerServiceTest {
         employeeDTOList = Collections.emptyList();
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(employeeDTOList);
-        when(listValidator.obtainEmployeeListValidator())
-                .thenReturn(employeeList -> ResponseEntity.status(HttpStatus.NO_CONTENT)
-                        .body(new EmployeeListResponse(Collections.EMPTY_LIST)));
+        when(listValidator.apply(employeeDTOList)).thenReturn(ResponseEntity.status(HttpStatus.NO_CONTENT)
+                .body(new EmployeeListResponse(Collections.EMPTY_LIST)));
 
         ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 
@@ -82,9 +81,9 @@ class ObtainEmployeesWithoutAssignmentManagerServiceTest {
         employeeDTOList = Arrays.asList(employeeA);
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(employeeDTOList);
-        when(listValidator.obtainEmployeeListValidator())
-                .thenReturn(employeeList -> ResponseEntity.status(HttpStatus.OK)
-                        .body(new EmployeeListResponse(employeeList)));
+        when(listValidator.apply(employeeDTOList))
+                .thenReturn(ResponseEntity.status(HttpStatus.OK)
+                        .body(new EmployeeListResponse(employeeDTOList)));
 
         ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 
