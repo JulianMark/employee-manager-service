@@ -41,11 +41,11 @@ class CampaignEmployeesValidatorTest {
     @DisplayName("When the method receives a list is not empty should returns 200")
     public void CampaignEmployeesValidator_ReceivesNotEmptyList_ReturnsOk () {
         EmployeeCampaignDTO validEmployeeCampaignDTO = new EmployeeCampaignDTO(1,"JOHN", "DOU",
-                2f, 400f,6f,2f,"","");
+                2f, 400f,1f,6f,2f,"","");
         List<EmployeeCampaignDTO> validList = Arrays.asList(validEmployeeCampaignDTO);
         EmployeeCampaign validEmployeeCampaign = new EmployeeCampaign(1,"JOHN", "DOU",
                 2f, 400f,6f,2f,0f,
-                0f,"","");
+                0f,0.5f,"","");
         List<EmployeeCampaign> employeesCampaign = Arrays.asList(validEmployeeCampaign);
         EmployeeCampaign employeeCampaign = employeeCampaignBuilder.apply(validEmployeeCampaignDTO);
         when(employeeCampaignBuilder.apply(validEmployeeCampaignDTO)).thenReturn(employeeCampaign);

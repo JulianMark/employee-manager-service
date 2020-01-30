@@ -18,6 +18,7 @@ public class EmployeeCampaign {
     private Float totalNonProductiveHours;
     private Float totalAverageCatchment;
     private Float totalAverageAmount;
+    private Float totalAverageCreditType;
     private String initialDate;
     private String finalDate;
 }

@@ -31,6 +31,9 @@ public class EmployeeCampaignBuilder implements Function<EmployeeCampaignDTO, Em
         final Float totalAverageAmount = (totalAmountDonations == 0f)
                 ? 0f
                 : (totalAmountDonations / totalDonations);
+        final Float totalAverageCreditType = (totalDonations == 0f || dto.getCreditType() == 0f)
+                ? 0f
+                : (dto.getCreditType() / totalDonations) * 100 ;
 
         return new EmployeeCampaign(dto.getId()
                 , dto.getName()
@@ -41,6 +44,7 @@ public class EmployeeCampaignBuilder implements Function<EmployeeCampaignDTO, Em
                 , totalNonProductiveHours
                 , totalAverageCatchment
                 , totalAverageAmount
+                , totalAverageCreditType
                 , dto.getInitialDate()
                 , dto.getFinalDate());
     }

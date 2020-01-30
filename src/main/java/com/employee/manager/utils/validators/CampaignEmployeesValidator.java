@@ -29,13 +29,4 @@ public class CampaignEmployeesValidator implements Function<List<EmployeeCampaig
         }
         return ResponseEntity.noContent().build();
     }
-
-    @Override
-    public ResponseEntity<CampaignEmployeesResponse> apply(List<EmployeeCampaignDTO> employeeCampaignDTOS) {
-        if (!employeeCampaignDTOS.isEmpty()){
-            List<EmployeeCampaign> listResponse = campaignEmployeesBuilder.apply(employeeCampaignDTOS);
-            return ResponseEntity.ok(new CampaignEmployeesResponse(listResponse));
-        }
-        return ResponseEntity.noContent().build();
-    }
 }

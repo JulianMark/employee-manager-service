@@ -14,6 +14,7 @@ public class EmployeeCampaignDTO {
     private String lastName;
     private Float totalDonations;
     private Float totalAmountDonations;
+    private Float creditType;
     private Float totalProductiveHours;
     private Float totalNonProductiveHours;
     private String initialDate;
