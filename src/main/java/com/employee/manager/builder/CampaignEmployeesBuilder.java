@@ -12,10 +12,10 @@ import java.util.stream.Collectors;
 @Component
 public class CampaignEmployeesBuilder implements Function<List<EmployeeCampaignDTO>, List<EmployeeCampaign>> {
 
-    private final EmployeeCampaignBuilder employeeCampaignBuilder;
+    private final Function<EmployeeCampaignDTO, EmployeeCampaign> employeeCampaignBuilder;
 
     @Autowired
-    public CampaignEmployeesBuilder(EmployeeCampaignBuilder employeeCampaignBuilder) {
+    public CampaignEmployeesBuilder(Function<EmployeeCampaignDTO, EmployeeCampaign> employeeCampaignBuilder) {
         this.employeeCampaignBuilder = employeeCampaignBuilder;
     }
 
@@ -23,9 +23,9 @@ public class CampaignEmployeesBuilder implements Function<List<EmployeeCampaignD
     public List<EmployeeCampaign> apply(List<EmployeeCampaignDTO> employeeListCampaignDTO) {
          return employeeListCampaignDTO
                 .stream()
-                 /*.filter(employeeCampaignDTO -> (employeeCampaignDTO.getName() != null
-                         && employeeCampaignDTO.getLastName() != null))*/
-                .map(dto -> employeeCampaignBuilder.apply(dto))
+                 .filter(employeeCampaignDTO -> (employeeCampaignDTO.getName() != null
+                         && employeeCampaignDTO.getLastName() != null))
+                .map(employeeCampaignBuilder)
                 .collect(Collectors.toList());
     }
 }

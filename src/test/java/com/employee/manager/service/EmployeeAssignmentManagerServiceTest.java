@@ -13,6 +13,8 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.function.Function;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -26,7 +28,8 @@ class EmployeeAssignmentManagerServiceTest {
     private EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper;
 
     @Mock
-    private EmployeeAssignmentValidator employeeAssignmentValidator;
+    private Function<EmployeeAssignmentCampaignResponse,
+            ResponseEntity<EmployeeAssignmentCampaignResponse>> employeeAssignmentValidator;
 
     @InjectMocks
     private ManagerService sut;
@@ -74,7 +77,7 @@ class EmployeeAssignmentManagerServiceTest {
         EmployeeAssignmentCampaignResponse response = new EmployeeAssignmentCampaignResponse();
         when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
                 .thenReturn(response);
-        when(employeeAssignmentValidator.obtainEmployeeAssignmentValidator())
+        when(employeeAssignmentValidator)
                 .thenReturn(employeeAssignmentCampaignResponse -> ResponseEntity
                         .status(HttpStatus.NO_CONTENT).body(response));
 
@@ -105,7 +108,7 @@ class EmployeeAssignmentManagerServiceTest {
                 1, "JUAN", "PEREZ", "35797912", null);
         when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
                 .thenReturn(employeeResponse);
-        when(employeeAssignmentValidator.obtainEmployeeAssignmentValidator())
+        when(employeeAssignmentValidator)
                 .thenReturn(employeeAssignmentCampaignResponse -> ResponseEntity
                         .status(HttpStatus.OK).body(employeeResponse));
 

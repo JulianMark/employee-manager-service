@@ -2,6 +2,7 @@ package com.employee.manager.service;
 
 import com.employee.manager.mapper.*;
 import com.employee.manager.service.http.*;
+import com.employee.manager.utils.suppliers.EmployeeAssignmentSupplier;
 import com.employee.manager.utils.validators.CampaignEmployeesValidator;
 import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
 import com.employee.manager.utils.validators.ListValidator;
@@ -39,6 +40,7 @@ public class ManagerService {
     private final ListValidator listValidator;
     private final EmployeeAssignmentValidator employeeAssignmentValidator;
     private final CampaignEmployeesValidator campaignEmployeesValidator;
+    private final EmployeeAssignmentSupplier employeeAssignmentSupplier;
 
     @Autowired
     public ManagerService(AddMapper addMapper,
@@ -47,7 +49,7 @@ public class ManagerService {
                           EmployeeListMapper employeeListMapper,
                           EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper,
                           CampaignEmployeesMapper campaignEmployeesMapper, ListValidator listValidator,
-                          EmployeeAssignmentValidator employeeAssignmentValidator, CampaignEmployeesValidator campaignEmployeesValidator) {
+                          EmployeeAssignmentValidator employeeAssignmentValidator, CampaignEmployeesValidator campaignEmployeesValidator, EmployeeAssignmentSupplier employeeAssignmentSupplier) {
         this.addMapper = addMapper;
         this.assignTypeMapper = assignTypeMapper;
         this.employeeListWithoutAssignmentMapper = employeeListWithoutAssignmentMapper;
@@ -57,6 +59,7 @@ public class ManagerService {
         this.listValidator = listValidator;
         this.employeeAssignmentValidator = employeeAssignmentValidator;
         this.campaignEmployeesValidator = campaignEmployeesValidator;
+        this.employeeAssignmentSupplier = employeeAssignmentSupplier;
     }
 
     @PostMapping(
@@ -158,8 +161,8 @@ public class ManagerService {
         try {
             validateEmployeeAssignmentRequest(request);
             return Optional.ofNullable(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(request))
-                    .map(employeeAssignmentValidator.obtainEmployeeAssignmentValidator())
-                    .orElseGet(employeeAssignmentValidator.obtainEmptyEmployeeAssignment());
+                    .map(employeeAssignmentValidator)
+                    .orElseGet(employeeAssignmentSupplier);
         }catch (IllegalArgumentException iae){
             LOGGER.warn("The parameters entered are not valid");
             return ResponseEntity.badRequest()

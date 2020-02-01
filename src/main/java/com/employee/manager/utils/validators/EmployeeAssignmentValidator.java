@@ -11,27 +11,16 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Component
-public class EmployeeAssignmentValidator {
+public class EmployeeAssignmentValidator implements Function<EmployeeAssignmentCampaignResponse,
+        ResponseEntity<EmployeeAssignmentCampaignResponse>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeAssignmentValidator.class);
 
-    public Function<EmployeeAssignmentCampaignResponse,
-            ResponseEntity<EmployeeAssignmentCampaignResponse>> obtainEmployeeAssignmentValidator (){
-        return this::obtainEmployeeAssignment;
-    }
-
-    ResponseEntity<EmployeeAssignmentCampaignResponse> obtainEmployeeAssignment(
-            EmployeeAssignmentCampaignResponse employeeAssignmentCampaignResponse) {
+    @Override
+    public ResponseEntity<EmployeeAssignmentCampaignResponse> apply(EmployeeAssignmentCampaignResponse employeeAssignmentCampaignResponse) {
         LOGGER.info("The employee {} {} was obtained"
                 ,employeeAssignmentCampaignResponse.getName()
                 ,employeeAssignmentCampaignResponse.getLastName());
         return ResponseEntity.status(HttpStatus.OK).body(employeeAssignmentCampaignResponse);
-    }
-
-    public Supplier<ResponseEntity<EmployeeAssignmentCampaignResponse>> obtainEmptyEmployeeAssignment(){
-        return () ->{
-            LOGGER.warn("There are no employees with the established search parameters");
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeAssignmentCampaignResponse());
-        };
     }
 }
