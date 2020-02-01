@@ -53,32 +53,6 @@ class AddEmployeeManagerServiceTest {
                 is(HttpStatus.BAD_REQUEST));
     }
 
-    class RequestArgumentsSource implements ArgumentsProvider {
-
-        @Override
-        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
-            return Stream.of(Arguments.of((AddRequest) null),Arguments.of(new AddRequest("","","","","")));
-        }
-    }
-/*
-    @Test
-    @DisplayName("When employee request is null should return 400 (Bad Request)")
-    void addEmployee_RequestIsNull_ReturnsBadRequest(){
-        ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(null);
-        assertThat("Status Code Response", responseEntity.getStatusCode(),
-                is(HttpStatus.BAD_REQUEST));
-    }
-
-    @Test
-    @DisplayName("When employee property request is null or empty should return 400 (Bad Request)")
-    void addEmployee_PropertyRequestIsNullOrEmpty_ReturnsBadRequest(){
-        AddRequest addRequestWithEmptyProp = new AddRequest("","","","","");
-        ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(addRequestWithEmptyProp);
-        assertThat("Status Code Response", responseEntity.getStatusCode(),
-                is(HttpStatus.BAD_REQUEST));
-    }
-*/
-
     @Test
     @DisplayName("When addMapper throws Exception should return 500 (Internal Server Error)")
     void addEmployee_AddMapperThrowException_ReturnsInternalServerError(){
@@ -97,6 +71,19 @@ class AddEmployeeManagerServiceTest {
         assertThat(responseEntity.getBody().getResult(),is((byte)0));
     }
 
+    static class RequestArgumentsSource implements ArgumentsProvider {
+        @Override
+        public Stream<? extends Arguments>
+        provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(null
+                    ,new AddRequest("","","","","")
+                    ,new AddRequest("JOHN","","","","")
+                    ,new AddRequest("JOHN","DOU","","","")
+                    ,new AddRequest("JOHN","DOU","31464981","","")
+                    ,new AddRequest("JOHN","DOU","31464981","","")
+                    ,new AddRequest("JOHN","DOU","31464981","JOHNNY",""))
+                    .map(Arguments::of);
 
-
+        }
+    }
 }
