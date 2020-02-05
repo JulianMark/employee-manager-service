@@ -20,6 +20,7 @@ import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Employees list manager service")
@@ -48,18 +49,14 @@ class EmployeesWithoutAssignmentManagerServiceTest {
     @Test
     @DisplayName("When obtainEmployeeList is empty. Should return 204 (No Content)")
     public void obtainEmployeeListWithoutAssignment_EmployeeListIsEmpty_ReturnsNoContent(){
-        employeeDTOList = Collections.emptyList();
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
-                .thenReturn(employeeDTOList);
-        when(listValidator.apply(employeeDTOList)).thenReturn(ResponseEntity.status(HttpStatus.NO_CONTENT)
-                .body(new EmployeeListResponse(Collections.EMPTY_LIST)));
+                .thenReturn(Collections.EMPTY_LIST);
+        when(listValidator.apply(any(List.class))).thenReturn(ResponseEntity.noContent().build());
 
         ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.NO_CONTENT));
-        assertThat(responseEntity.getBody().getEmployeeList().toString(),
-                is(employeeDTOList.toString()));
     }
 
     @Test
@@ -82,8 +79,7 @@ class EmployeesWithoutAssignmentManagerServiceTest {
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(employeeDTOList);
         when(listValidator.apply(employeeDTOList))
-                .thenReturn(ResponseEntity.status(HttpStatus.OK)
-                        .body(new EmployeeListResponse(employeeDTOList)));
+                .thenReturn(ResponseEntity.ok((new EmployeeListResponse(employeeDTOList))));
 
         ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeListWithoutAssignment();
 

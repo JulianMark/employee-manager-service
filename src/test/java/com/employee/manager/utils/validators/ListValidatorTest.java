@@ -30,7 +30,9 @@ class ListValidatorTest {
     public void obtainList_EmployeeListIsNotEmpty_ReturnsOK (){
         EmployeeDTO validEmployeeDTO = new EmployeeDTO(1, "JOHN", "DOU", "31252456", 1);
         List<EmployeeDTO> validList = Arrays.asList(validEmployeeDTO);
+
         ResponseEntity<EmployeeListResponse> responseEntity = sut.apply(validList);
+
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
         assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(), is(validList.get(0).toString()));
         assertThat(responseEntity.getBody().getEmployeeList().size(), is (validList.size()));
@@ -39,7 +41,9 @@ class ListValidatorTest {
     @Test
     @DisplayName("When the method receives a empty list should returns 204")
     public void obtainList_EmployeeListIsEmpty_ReturnsNoContent(){
+
         ResponseEntity<EmployeeListResponse> responseEntity = sut.apply(Collections.EMPTY_LIST);
+
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.NO_CONTENT));
     }
 }

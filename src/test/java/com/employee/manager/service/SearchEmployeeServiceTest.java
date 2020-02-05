@@ -4,6 +4,7 @@ package com.employee.manager.service;
 import com.employee.manager.mapper.EmployeeListMapper;
 import com.employee.manager.model.dto.EmployeeDTO;
 import com.employee.manager.service.http.EmployeeListResponse;
+import com.employee.manager.service.http.SearchRequest;
 import com.employee.manager.utils.validators.ListValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -25,19 +26,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @DisplayName("Employees list manager service")
-class SearchEmployeeWithParamManagerServiceTest {
+class SearchEmployeeServiceTest {
 
-    private final String VALID_PARAM = "PARAM";
-    private final String NO_RESULT_PARAM = "";
+    private final SearchRequest VALID_SEARCH_REQUEST = new SearchRequest("PARAM");
 
     @Spy
     private List<EmployeeDTO> employeeDTOList;
 
     @Mock
     private EmployeeDTO employeeA;
-
-    @Mock
-    private EmployeeDTO employeeB;
 
     @Mock
     private EmployeeListMapper employeeListMapper;
@@ -53,29 +50,33 @@ class SearchEmployeeWithParamManagerServiceTest {
         MockitoAnnotations.initMocks(this);
     }
 
-/*    @Test
-    @DisplayName("When searchEmployee is empty. Should return 204 (No Content)")
-    public void searchEmployee_EmployeeListIsEmpty_ReturnsNoContent() {
+    @Test
+    @DisplayName("When searchRequest is null. Should return 400 (Bad Request)")
+    public void obtainEmployeeList_SearchRequestIsNull_ReturnsBadRequest(){
+        ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeList(null);
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
+    @Test
+    @DisplayName("When obtainEmployeeList is empty. Should return 204 (No Content)")
+    public void obtainEmployeeList_EmployeeListIsEmpty_ReturnsNoContent() {
         employeeDTOList = Collections.emptyList();
 
         when(employeeListMapper.obtainEmployeeList(any())).thenReturn(employeeDTOList);
-        when(listValidator.obtainEmployeeListValidator())
-                .thenReturn(employeeList -> ResponseEntity
-                        .status(HttpStatus.NO_CONTENT).body(new EmployeeListResponse(Collections.emptyList())));
+        when(listValidator.apply(employeeDTOList))
+                .thenReturn(ResponseEntity.noContent().build());
 
-        ResponseEntity<EmployeeListResponse> employeeResponseEntity = sut.searchEmployee(VALID_PARAM);
+        ResponseEntity<EmployeeListResponse> employeeResponseEntity = sut.obtainEmployeeList(VALID_SEARCH_REQUEST);
 
         assertThat(employeeResponseEntity.getStatusCode(), is(HttpStatus.NO_CONTENT));
-        assertThat(employeeResponseEntity.getBody().getEmployeeList().toString(), is(employeeDTOList.toString()));
+    }
 
-    }*/
-
-  /*  @Test
+    @Test
     @DisplayName("When EmployeeListMapper ThrowsException. Should return 500 (Internal Server Error)")
     public void searchEmployee_searchEmployeeThrowsException_ReturnsInternalServerError(){
-        when(employeeListMapper.obtainEmployeeList(any(String.class))).thenReturn(null);
+        when(employeeListMapper.obtainEmployeeList(any(SearchRequest.class))).thenReturn(null);
 
-        ResponseEntity<EmployeeListResponse> responseEntity = sut.searchEmployee(NO_RESULT_PARAM);
+        ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeList(VALID_SEARCH_REQUEST);
 
         assertThat("Status Code Response",responseEntity.getStatusCode(),
                 is(HttpStatus.INTERNAL_SERVER_ERROR ));
@@ -84,18 +85,17 @@ class SearchEmployeeWithParamManagerServiceTest {
     @Test
     @DisplayName("When searchEmployee did not catch Exceptions. Should return 200 (OK)")
     public void searchEmployee_NoExceptionCaught_ReturnsOk(){
-        employeeDTOList = Arrays.asList(employeeA,employeeB);
-        when(employeeListMapper.obtainEmployeeList(any(String.class)))
+        employeeDTOList = Arrays.asList(employeeA);
+        when(employeeListMapper.obtainEmployeeList(any(SearchRequest.class)))
                 .thenReturn(employeeDTOList);
-        when(listValidator.obtainEmployeeListValidator())
-                .thenReturn(employeeList -> ResponseEntity
-                .status(HttpStatus.OK).body(new EmployeeListResponse(employeeDTOList)));
+        when(listValidator.apply(employeeDTOList))
+                .thenReturn(ResponseEntity.ok(new EmployeeListResponse(employeeDTOList)));
 
-        ResponseEntity<EmployeeListResponse> responseEntity = sut.searchEmployee(VALID_PARAM);
+        ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeList(VALID_SEARCH_REQUEST);
 
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.OK));
-        assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(),
+          assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(),
                 is(employeeDTOList.get(0).toString()));
-    }*/
+    }
 }

@@ -26,5 +26,4 @@ public class Utils {
             throw new IllegalArgumentException("The id number cannot be equal to or less than zero");
         }
     }
-
 }

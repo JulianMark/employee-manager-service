@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.employee.manager.mapper.CampaignEmployeesMapper">
+<mapper namespace="com.employee.manager.mapper.CampaignStatusMapper">
 
     <select id="obtainCampaignEmployees" resultType="com.employee.manager.model.dto.EmployeeCampaignDTO">
 		SELECT E.ID, E.NAME, E.LASTNAME,
@@ -31,7 +31,7 @@
 			TE.FINAL_DATE FINALDATE
 		FROM EMPLOYEES E
 				 JOIN TEAM_EMPLOYEES TE ON TE.ID_EMPLOYEE = E.ID
-		WHERE TE.ID_CAMPAIGN = #{idCampaign}
+		WHERE TE.ID_CAMPAIGN = #{request.idCampaign}
 	</select>
 
 </mapper>

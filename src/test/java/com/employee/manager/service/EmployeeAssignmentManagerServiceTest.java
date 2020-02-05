@@ -7,9 +7,11 @@ import com.employee.manager.utils.validators.EmployeeAssignmentValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -20,7 +22,6 @@ import java.util.stream.Stream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -41,16 +42,22 @@ class EmployeeAssignmentManagerServiceTest {
     @BeforeEach
     public void setUp(){ MockitoAnnotations.initMocks(this); }
 
-    static Stream<Arguments> employeeAssignmentRequestProvider() {
-        return Stream.of(
-                arguments((EmployeeAssignmentCampaignRequest) null),
-                arguments(new EmployeeAssignmentCampaignRequest(null,1)),
-                arguments(new EmployeeAssignmentCampaignRequest(2,null))
-        );
+    static class EmployeeAssignmentRequestArgumentsSource implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
+            return Stream.of(
+                    null
+                    ,new EmployeeAssignmentCampaignRequest(null,1)
+                    ,new EmployeeAssignmentCampaignRequest(1,null)
+                    ,new EmployeeAssignmentCampaignRequest(0,1)
+                    ,new EmployeeAssignmentCampaignRequest(-1,1)
+            ).map(Arguments::of);
+        }
     }
 
     @ParameterizedTest
-    @MethodSource("employeeAssignmentRequestProvider")
+    @ArgumentsSource(EmployeeAssignmentRequestArgumentsSource.class)
     @DisplayName("When EmployeeAssignmentCampaignRequest is null should return 400 (Bad Request)")
     void obtainEmployeeAssignmentCampaign__RequestIsNull_ReturnsBadRequest(EmployeeAssignmentCampaignRequest request){
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut
@@ -63,11 +70,11 @@ class EmployeeAssignmentManagerServiceTest {
     @Test
     @DisplayName("When obtainEmployeeList is empty. Should return 204 (No Content)")
     public void obtainEmployeeListWithoutAssignment_EmployeeListIsEmpty_ReturnsNoContent(){
-        EmployeeAssignmentCampaignResponse response = new EmployeeAssignmentCampaignResponse();
-        when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
-                .thenReturn(response);
-        when(employeeAssignmentValidator.apply(any()))
-                .thenReturn(ResponseEntity.status(HttpStatus.NO_CONTENT).body(response));
+        when(employeeAssignmentCampaignMapper
+                .obtainEmployeeAssignmentCampaign(any(EmployeeAssignmentCampaignRequest.class)))
+                .thenReturn(new EmployeeAssignmentCampaignResponse());
+        when(employeeAssignmentValidator.apply(any(EmployeeAssignmentCampaignResponse.class)))
+                .thenReturn(ResponseEntity.noContent().build());
 
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut
                 .obtainEmployeeAssignmentCampaign(VALID_REQUEST);
@@ -79,7 +86,8 @@ class EmployeeAssignmentManagerServiceTest {
     @Test
     @DisplayName("When EmployeeMapper throws Exception.Should return 500 (Internal Server Error)")
     public void loginEmployee_EmployeeMapperThrowException_ReturnsInternalServerError(){
-        when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
+        when(employeeAssignmentCampaignMapper
+                .obtainEmployeeAssignmentCampaign(any(EmployeeAssignmentCampaignRequest.class)))
                 .thenThrow(new RuntimeException ("something bad happened"));
 
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut
@@ -94,10 +102,11 @@ class EmployeeAssignmentManagerServiceTest {
     public void obtainEmployeeAssignmentCampaign_NoExceptionCaught_ReturnsOk(){
         final EmployeeAssignmentCampaignResponse employeeResponse = new EmployeeAssignmentCampaignResponse(
                 1, "JUAN", "PEREZ", "35797912", null);
-        when(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(any()))
+        when(employeeAssignmentCampaignMapper
+                .obtainEmployeeAssignmentCampaign(any(EmployeeAssignmentCampaignRequest.class)))
                 .thenReturn(employeeResponse);
-        when(employeeAssignmentValidator.apply(any()))
-                .thenReturn(ResponseEntity.status(HttpStatus.OK).body(employeeResponse));
+        when(employeeAssignmentValidator.apply(any(EmployeeAssignmentCampaignResponse.class)))
+                .thenReturn(ResponseEntity.ok(employeeResponse));
 
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut
                 .obtainEmployeeAssignmentCampaign(VALID_REQUEST);

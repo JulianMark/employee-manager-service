@@ -7,16 +7,21 @@ import com.employee.manager.service.http.QueryResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.ArgumentsProvider;
+import org.junit.jupiter.params.provider.ArgumentsSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.stream.Stream;
+
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.not;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -35,19 +40,27 @@ class AssignTypeManagerServiceTest {
     @BeforeEach
     void setUp(){ MockitoAnnotations.initMocks(this); }
 
-    @Test
-    @DisplayName("When assign type request is null should return 400 (Bad Request)")
-    void assignEmployee_RequestIsNull_ReturnsBadRequest(){
-        ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(null);
-        assertThat("Status Code Response", responseEntity.getStatusCode(),
-                is(HttpStatus.BAD_REQUEST));
+    static class AssignTypeRequestArgumentsSource implements ArgumentsProvider {
+
+        @Override
+        public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
+            return Stream.of(
+                    null
+                    ,new AssignTypeRequest(null,1)
+                    ,new AssignTypeRequest(1,null)
+                    ,new AssignTypeRequest(0,1)
+                    ,new AssignTypeRequest(1,0)
+                    ,new AssignTypeRequest(-1,1)
+                    ,new AssignTypeRequest(1,-1)
+            ).map(Arguments::of);
+        }
     }
 
-    @Test
-    @DisplayName("When assign property request is null or less than zero should return 400 (Bad Request)")
-    void assignEmployee_PropertyRequestIsNullOrLessThanZero_ReturnsBadRequest(){
-        AssignTypeRequest assignTypeRequestWithEmptyProp = new AssignTypeRequest(null,0);
-        ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(assignTypeRequestWithEmptyProp);
+    @ParameterizedTest
+    @ArgumentsSource(AssignTypeRequestArgumentsSource.class)
+    @DisplayName("When assign type request is null, or param throw illegal exceptions should return 400 (Bad Request)")
+    void assignEmployee_RequestIsNullOrParamThrowsExceptions_ReturnsBadRequest(AssignTypeRequest request){
+        ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(request);
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
     }

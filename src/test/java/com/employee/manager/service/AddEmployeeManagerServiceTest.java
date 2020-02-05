@@ -47,7 +47,7 @@ class AddEmployeeManagerServiceTest {
     @ParameterizedTest
     @ArgumentsSource(RequestArgumentsSource.class)
     @DisplayName("When employee request is null Or Empty should return 400 (Bad Request)")
-    void addEmployee_PropertyRequestIsNullOrEmpty_ReturnsBadRequest2(AddRequest request){
+    void addEmployee_PropertyRequestIsNullOrEmpty_ReturnsBadRequest2(AddRequest request) {
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(request);
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
@@ -74,7 +74,7 @@ class AddEmployeeManagerServiceTest {
     static class RequestArgumentsSource implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments>
-        provideArguments(ExtensionContext extensionContext) throws Exception {
+        provideArguments(ExtensionContext extensionContext){
             return Stream.of(null
                     ,new AddRequest("","","","","")
                     ,new AddRequest("JOHN","","","","")
@@ -82,7 +82,7 @@ class AddEmployeeManagerServiceTest {
                     ,new AddRequest("JOHN","DOU","31464981","","")
                     ,new AddRequest("JOHN","DOU","31464981","","")
                     ,new AddRequest("JOHN","DOU","31464981","JOHNNY",""))
-                    .map(Arguments::of);
+                     .map(Arguments::of);
 
         }
     }

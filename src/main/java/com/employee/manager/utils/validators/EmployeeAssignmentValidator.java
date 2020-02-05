@@ -17,7 +17,7 @@ public class EmployeeAssignmentValidator implements Function<EmployeeAssignmentC
     private static final Logger LOGGER = LoggerFactory.getLogger(EmployeeAssignmentValidator.class);
 
     @Override
-    public ResponseEntity<EmployeeAssignmentCampaignResponse> apply(EmployeeAssignmentCampaignResponse employeeAssignmentCampaignResponse) {
+        public ResponseEntity<EmployeeAssignmentCampaignResponse> apply(EmployeeAssignmentCampaignResponse employeeAssignmentCampaignResponse) {
         LOGGER.info("The employee {} {} was obtained"
                 ,employeeAssignmentCampaignResponse.getName()
                 ,employeeAssignmentCampaignResponse.getLastName());

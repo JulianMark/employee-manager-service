@@ -5,6 +5,7 @@ import com.employee.manager.model.dto.EmployeeCampaignDTO;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 @Component
@@ -13,9 +14,9 @@ public class EmployeeCampaignBuilder implements Function<EmployeeCampaignDTO, Em
     @Override
     public EmployeeCampaign apply(EmployeeCampaignDTO dto) {
 
-        final Float totalDonations = (dto.getTotalDonations() == null)
-                ? 0f
-                : dto.getTotalDonations();
+
+        final Float totalDonations = Optional.ofNullable(dto.getTotalDonations()).orElse(0f);
+
         final Float totalAmountDonations = (dto.getTotalAmountDonations() == null)
                 ? 0f
                 : dto.getTotalAmountDonations();

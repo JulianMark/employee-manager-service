@@ -14,10 +14,10 @@ import java.util.function.Function;
 @Component
 public class CampaignEmployeesValidator implements Function<List<EmployeeCampaignDTO>, ResponseEntity<CampaignEmployeesResponse>>{
 
-    private final CampaignEmployeesBuilder campaignEmployeesBuilder;
+    private final Function<List<EmployeeCampaignDTO>, List<EmployeeCampaign>> campaignEmployeesBuilder;
 
     @Autowired
-    public CampaignEmployeesValidator(CampaignEmployeesBuilder campaignEmployeesBuilder) {
+    public CampaignEmployeesValidator(Function<List<EmployeeCampaignDTO>, List<EmployeeCampaign>> campaignEmployeesBuilder) {
         this.campaignEmployeesBuilder = campaignEmployeesBuilder;
     }
 

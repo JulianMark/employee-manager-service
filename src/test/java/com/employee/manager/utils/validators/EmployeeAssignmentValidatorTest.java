@@ -15,10 +15,6 @@ import static org.hamcrest.Matchers.is;
 
 class EmployeeAssignmentValidatorTest {
 
-    private static ResponseEntity<EmployeeAssignmentCampaignResponse> get (){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(new EmployeeAssignmentCampaignResponse());
-    }
-
     @InjectMocks
     private EmployeeAssignmentValidator sut;
 
@@ -36,14 +32,6 @@ class EmployeeAssignmentValidatorTest {
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
         assertThat(responseEntity.getBody().getId(), is(response.getId()));
-    }
-
-    @Test
-    public void obtainEmptyEmployeeAssignment_EmployeeIsEmpty_ReturnsNoContent(){
-        Supplier<ResponseEntity<EmployeeAssignmentCampaignResponse>> expected = EmployeeAssignmentValidatorTest::get;
-        //Supplier<ResponseEntity<EmployeeAssignmentCampaignResponse>> actual = sut.obtainEmptyEmployeeAssignment();
-
-        //assertThat(expected.get().toString(), is (actual.get().toString()));
     }
 
 }

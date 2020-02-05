@@ -1,6 +1,8 @@
 package com.employee.manager.service;
 
 import com.employee.manager.mapper.*;
+import com.employee.manager.model.dto.EmployeeCampaignDTO;
+import com.employee.manager.model.dto.EmployeeDTO;
 import com.employee.manager.service.http.*;
 import com.employee.manager.utils.suppliers.EmployeeAssignmentSupplier;
 import com.employee.manager.utils.validators.CampaignEmployeesValidator;
@@ -18,9 +20,13 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static com.employee.manager.utils.Utils.validateIdNumber;
+import static com.employee.manager.utils.Utils.validateRequest;
 import static com.employee.manager.utils.validators.request.AddRequestValidator.validateAddRequest;
 import static com.employee.manager.utils.validators.request.AssignTypeRequestValidator.validateAssignTypeRequest;
 import static com.employee.manager.utils.validators.request.EmployeeAssignmentRequestValidator.validateEmployeeAssignmentRequest;
@@ -36,11 +42,11 @@ public class ManagerService {
     private final EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper;
     private final EmployeeListMapper employeeListMapper;
     private final EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper;
-    private final CampaignEmployeesMapper campaignEmployeesMapper;
-    private final ListValidator listValidator;
-    private final EmployeeAssignmentValidator employeeAssignmentValidator;
-    private final CampaignEmployeesValidator campaignEmployeesValidator;
-    private final EmployeeAssignmentSupplier employeeAssignmentSupplier;
+    private final CampaignStatusMapper campaignStatusMapper;
+    private final Function<List<EmployeeDTO>, ResponseEntity<EmployeeListResponse>> listValidator;
+    private final Function<EmployeeAssignmentCampaignResponse, ResponseEntity<EmployeeAssignmentCampaignResponse>> employeeAssignmentValidator;
+    private final Function<List<EmployeeCampaignDTO>, ResponseEntity<CampaignEmployeesResponse>> campaignEmployeesValidator;
+    private final Supplier<ResponseEntity<EmployeeAssignmentCampaignResponse>> employeeAssignmentSupplier;
 
     @Autowired
     public ManagerService(AddMapper addMapper,
@@ -48,14 +54,17 @@ public class ManagerService {
                           EmployeeListWithoutAssignmentMapper employeeListWithoutAssignmentMapper,
                           EmployeeListMapper employeeListMapper,
                           EmployeeAssignmentCampaignMapper employeeAssignmentCampaignMapper,
-                          CampaignEmployeesMapper campaignEmployeesMapper, ListValidator listValidator,
-                          EmployeeAssignmentValidator employeeAssignmentValidator, CampaignEmployeesValidator campaignEmployeesValidator, EmployeeAssignmentSupplier employeeAssignmentSupplier) {
+                          CampaignStatusMapper campaignStatusMapper,
+                          Function<List<EmployeeDTO>, ResponseEntity<EmployeeListResponse>> listValidator,
+                          Function<EmployeeAssignmentCampaignResponse, ResponseEntity<EmployeeAssignmentCampaignResponse>> employeeAssignmentValidator,
+                          Function<List<EmployeeCampaignDTO>, ResponseEntity<CampaignEmployeesResponse>> campaignEmployeesValidator,
+                          Supplier<ResponseEntity<EmployeeAssignmentCampaignResponse>> employeeAssignmentSupplier) {
         this.addMapper = addMapper;
         this.assignTypeMapper = assignTypeMapper;
         this.employeeListWithoutAssignmentMapper = employeeListWithoutAssignmentMapper;
         this.employeeListMapper = employeeListMapper;
         this.employeeAssignmentCampaignMapper = employeeAssignmentCampaignMapper;
-        this.campaignEmployeesMapper = campaignEmployeesMapper;
+        this.campaignStatusMapper = campaignStatusMapper;
         this.listValidator = listValidator;
         this.employeeAssignmentValidator = employeeAssignmentValidator;
         this.campaignEmployeesValidator = campaignEmployeesValidator;
@@ -142,6 +151,31 @@ public class ManagerService {
     }
 
     @PostMapping(
+            value = "employee/manager/searchEmployees",
+            produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation("Consultar lista de empleados por parametro de busqueda")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "Se obtiene el resultado de la consulta a base", response = EmployeeListResponse.class),
+            @ApiResponse(code = 204, message = "No se obtuvieron empleados con los parametros establecidos", response = EmployeeListResponse.class),
+            @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
+    })
+    public ResponseEntity<EmployeeListResponse> obtainEmployeeList (@RequestBody SearchRequest request){
+        try{
+            validateRequest(request);
+            return Optional.of(employeeListMapper.obtainEmployeeList(request))
+                    .map(listValidator)
+                    .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
+        }catch (IllegalArgumentException iae) {
+            LOGGER.warn("The parameters entered are not valid: ");
+            return ResponseEntity.badRequest().body(new EmployeeListResponse(iae.getMessage()));
+        }
+        catch (Exception ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new EmployeeListResponse(ex.getMessage()));
+        }
+    }
+
+    @PostMapping(
             value = "employee/manager/obtainEmployeeAssignmentCampaign",
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation("Consultar empleado asignado con cierto cargo para una campaña especifica")
@@ -190,12 +224,17 @@ public class ManagerService {
             @ApiResponse(code = 500, message = "Error inesperado del servicio web",
                     response = EmployeeAssignmentCampaignResponse.class)
     })
-    public ResponseEntity<CampaignEmployeesResponse> obtainStatusCampaign(@RequestBody CampaignStatusRequest request){
+    public ResponseEntity<CampaignEmployeesResponse> obtainCampaignStatus(@RequestBody CampaignStatusRequest request){
         try{
+            validateRequest(request);
             validateIdNumber(request.getIdCampaign());
-            return Optional.ofNullable(campaignEmployeesMapper.obtainCampaignEmployees(request.getIdCampaign()))
+            return Optional.ofNullable(campaignStatusMapper.obtainCampaignEmployees(request))
                     .map(campaignEmployeesValidator)
                     .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
+        }catch (IllegalArgumentException iae){
+            LOGGER.warn("The parameters entered are not valid");
+            return ResponseEntity.badRequest()
+                    .body(new CampaignEmployeesResponse(iae.getMessage()));
         }catch (Exception ex) {
             LOGGER.error("An error occurred while consulting the employees for the specific campaign",ex);
             return ResponseEntity

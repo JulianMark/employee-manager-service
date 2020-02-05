@@ -17,7 +17,9 @@
 		LEFT JOIN CAMPAIGNS C ON C.ID = TE.ID_CAMPAIGN
 		LEFT JOIN OSC O ON O.ID = C.ID_OSC
         WHERE TE.FINAL_DATE IS NULL
-        AND (E.NAME LIKE '%'||#{param}||'%' OR E.LASTNAME LIKE '%'||#{param}||'%' OR E.DNI LIKE '%'||#{param}||'%')
+        AND (E.NAME LIKE '%'||#{request.param}||'%'
+        	OR E.LASTNAME LIKE '%'||#{request.param}||'%'
+        	OR E.DNI LIKE '%'||#{request.param}||'%')
 	</select>
 
 </mapper>
