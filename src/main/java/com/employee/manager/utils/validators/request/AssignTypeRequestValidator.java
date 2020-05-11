@@ -9,7 +9,7 @@ import static com.employee.manager.utils.Utils.validateRequest;
 
 public class AssignTypeRequestValidator {
 
-    public static void validateAssignTypeRequest(AssignTypeRequest assignTypeRequest){
+    public static void validateAssignTypeRequest(AssignTypeRequest assignTypeRequest) {
         validateRequest(assignTypeRequest);
         validateIdNumber(assignTypeRequest.getIdType());
         validateIdNumber(assignTypeRequest.getIdEmployee());

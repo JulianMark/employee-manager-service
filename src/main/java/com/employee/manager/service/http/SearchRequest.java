@@ -15,6 +15,6 @@ import lombok.ToString;
 
 public class SearchRequest {
 
-    @ApiModelProperty(notes="Nombre o apellido, o dni del, o los  empleados a buscar", required = true, example = "JOHN")
+    @ApiModelProperty(notes = "Nombre o apellido, o dni del, o los  empleados a buscar", required = true, example = "JOHN")
     private String param;
 }

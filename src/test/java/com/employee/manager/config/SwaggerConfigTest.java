@@ -17,10 +17,12 @@ class SwaggerConfigTest {
     private SwaggerConfig config;
 
     @BeforeEach
-    public void init() {config = new SwaggerConfig();}
+    public void init() {
+        config = new SwaggerConfig();
+    }
 
     @Test
-    public void swagger_version_must_be_the_same_as_pom () throws Exception {
+    public void swagger_version_must_be_the_same_as_pom() throws Exception {
         final String pomVersion = getVersion();
         final ApiInfo apiInfo = config.apiInfo();
         assertThat(pomVersion).containsSequence(apiInfo.getVersion());

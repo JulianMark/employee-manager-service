@@ -33,7 +33,7 @@ import static com.employee.manager.utils.validators.request.EmployeeAssignmentRe
 
 
 @RestController
-@Api(value="Employee Manager WS", produces = MediaType.APPLICATION_JSON_VALUE)
+@Api(value = "Employee Manager WS", produces = MediaType.APPLICATION_JSON_VALUE)
 public class ManagerService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerService.class);
@@ -80,24 +80,24 @@ public class ManagerService {
             @ApiResponse(code = 400, message = "Argumentos inválidos", response = QueryResponse.class),
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = QueryResponse.class)
     })
-    public ResponseEntity<QueryResponse> addEmployee (@RequestBody AddRequest addRequest){
+    public ResponseEntity<QueryResponse> addEmployee(@RequestBody AddRequest addRequest) {
         try {
             validateAddRequest(addRequest);
             addMapper.addEmployee(addRequest);
             LOGGER.info("The employee {} {} registered successfully"
-                    ,addRequest.getName()
-                    ,addRequest.getLastName());
-            return ResponseEntity.ok(new QueryResponse((byte) 0,null));
-        }catch (IllegalArgumentException iae){
+                    , addRequest.getName()
+                    , addRequest.getLastName());
+            return ResponseEntity.ok(new QueryResponse((byte) 0, null));
+        } catch (IllegalArgumentException iae) {
             LOGGER.warn("The parameters entered are not valid: ");
             return ResponseEntity.badRequest().body(new QueryResponse(iae.getMessage()));
-        }catch (Exception ex) {
-        LOGGER.error("An error occurred while trying to add the employee {} {} "
-                ,addRequest.getName()
-                ,addRequest.getLastName()
-                ,ex);
-        return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new QueryResponse(ex.getMessage()));
+        } catch (Exception ex) {
+            LOGGER.error("An error occurred while trying to add the employee {} {} "
+                    , addRequest.getName()
+                    , addRequest.getLastName()
+                    , ex);
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new QueryResponse(ex.getMessage()));
         }
     }
 
@@ -110,21 +110,21 @@ public class ManagerService {
             @ApiResponse(code = 400, message = "Argumentos inválidos", response = QueryResponse.class),
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = QueryResponse.class)
     })
-    public ResponseEntity<QueryResponse> assignTypeEmployee (@RequestBody AssignTypeRequest assignTypeRequest){
+    public ResponseEntity<QueryResponse> assignTypeEmployee(@RequestBody AssignTypeRequest assignTypeRequest) {
         try {
             validateAssignTypeRequest(assignTypeRequest);
             assignTypeMapper.assignType(assignTypeRequest);
             LOGGER.info("The employee with ID {} was assigned successfully"
-                    ,assignTypeRequest.getIdEmployee());
-            return ResponseEntity.ok(new QueryResponse((byte) 0,null));
-        }catch (IllegalArgumentException iae){
+                    , assignTypeRequest.getIdEmployee());
+            return ResponseEntity.ok(new QueryResponse((byte) 0, null));
+        } catch (IllegalArgumentException iae) {
             LOGGER.warn("The parameters entered are not valid: ");
             return ResponseEntity.badRequest().body(new QueryResponse(iae.getMessage()));
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             LOGGER.error("An error occurred while trying to assign the employee with ID {} to type ID {}"
-                    ,assignTypeRequest.getIdEmployee()
-                    ,assignTypeRequest.getIdType()
-                    ,ex);
+                    , assignTypeRequest.getIdEmployee()
+                    , assignTypeRequest.getIdType()
+                    , ex);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR).body(new QueryResponse(ex.getMessage()));
         }
@@ -139,12 +139,12 @@ public class ManagerService {
             @ApiResponse(code = 204, message = "No se obtuvieron empleados sin asignacion", response = EmployeeListResponse.class),
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
     })
-    public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment (){
-        try{
+    public ResponseEntity<EmployeeListResponse> obtainEmployeeListWithoutAssignment() {
+        try {
             return Optional.of(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
-                        .map(listValidator)
-                        .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
-        }catch (Exception ex){
+                    .map(listValidator)
+                    .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmployeeListResponse(ex.getMessage()));
         }
@@ -159,17 +159,16 @@ public class ManagerService {
             @ApiResponse(code = 204, message = "No se obtuvieron empleados con los parametros establecidos", response = EmployeeListResponse.class),
             @ApiResponse(code = 500, message = "Error inesperado del servicio web", response = EmployeeListResponse.class)
     })
-    public ResponseEntity<EmployeeListResponse> obtainEmployeeList (@RequestBody SearchRequest request){
-        try{
+    public ResponseEntity<EmployeeListResponse> obtainEmployeeList(@RequestBody SearchRequest request) {
+        try {
             validateRequest(request);
             return Optional.of(employeeListMapper.obtainEmployeeList(request))
                     .map(listValidator)
                     .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
-        }catch (IllegalArgumentException iae) {
+        } catch (IllegalArgumentException iae) {
             LOGGER.warn("The parameters entered are not valid: ");
             return ResponseEntity.badRequest().body(new EmployeeListResponse(iae.getMessage()));
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmployeeListResponse(ex.getMessage()));
         }
@@ -189,20 +188,20 @@ public class ManagerService {
             @ApiResponse(code = 500, message = "Error inesperado del servicio web",
                     response = EmployeeAssignmentCampaignResponse.class)
     })
-    public ResponseEntity<EmployeeAssignmentCampaignResponse> obtainEmployeeAssignmentCampaign (
+    public ResponseEntity<EmployeeAssignmentCampaignResponse> obtainEmployeeAssignmentCampaign(
             @RequestBody EmployeeAssignmentCampaignRequest request
-            ){
+    ) {
         try {
             validateEmployeeAssignmentRequest(request);
             return Optional.ofNullable(employeeAssignmentCampaignMapper.obtainEmployeeAssignmentCampaign(request))
                     .map(employeeAssignmentValidator)
                     .orElseGet(employeeAssignmentSupplier);
-        }catch (IllegalArgumentException iae){
+        } catch (IllegalArgumentException iae) {
             LOGGER.warn("The parameters entered are not valid");
             return ResponseEntity.badRequest()
                     .body(new EmployeeAssignmentCampaignResponse(iae.getMessage()));
-        }catch (Exception ex) {
-            LOGGER.error("An error occurred while consulting the assignment of employee for the specific campaign",ex);
+        } catch (Exception ex) {
+            LOGGER.error("An error occurred while consulting the assignment of employee for the specific campaign", ex);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new EmployeeAssignmentCampaignResponse(ex.getMessage()));
@@ -224,19 +223,19 @@ public class ManagerService {
             @ApiResponse(code = 500, message = "Error inesperado del servicio web",
                     response = EmployeeAssignmentCampaignResponse.class)
     })
-    public ResponseEntity<CampaignEmployeesResponse> obtainCampaignStatus(@RequestBody CampaignStatusRequest request){
-        try{
+    public ResponseEntity<CampaignEmployeesResponse> obtainCampaignStatus(@RequestBody CampaignStatusRequest request) {
+        try {
             validateRequest(request);
             validateIdNumber(request.getIdCampaign());
             return Optional.ofNullable(campaignStatusMapper.obtainCampaignEmployees(request))
                     .map(campaignEmployeesValidator)
                     .orElseThrow(() -> new RuntimeException("An error occurred while consulting the list of employees"));
-        }catch (IllegalArgumentException iae){
+        } catch (IllegalArgumentException iae) {
             LOGGER.warn("The parameters entered are not valid");
             return ResponseEntity.badRequest()
                     .body(new CampaignEmployeesResponse(iae.getMessage()));
-        }catch (Exception ex) {
-            LOGGER.error("An error occurred while consulting the employees for the specific campaign",ex);
+        } catch (Exception ex) {
+            LOGGER.error("An error occurred while consulting the employees for the specific campaign", ex);
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new CampaignEmployeesResponse(ex.getMessage()));

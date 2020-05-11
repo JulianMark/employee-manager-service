@@ -6,17 +6,17 @@
 
     <insert id="addEmployee">
         INSERT INTO EMPLOYEES (NAME,
-                               LASTNAME,
-                               DNI,
-                               NICKNAME,
-                               PASSWORD,
-                               BINDING_DATE)
+        LASTNAME,
+        DNI,
+        NICKNAME,
+        PASSWORD,
+        BINDING_DATE)
         VALUES (#{addRequest.name},
-                #{addRequest.lastName},
-                #{addRequest.dni},
-                #{addRequest.nickname},
-                #{addRequest.password},
-                SYSDATE);
+        #{addRequest.lastName},
+        #{addRequest.dni},
+        #{addRequest.nickname},
+        #{addRequest.password},
+        SYSDATE);
     </insert>
 
 </mapper>

@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class ListValidator implements Function<List<EmployeeDTO>, ResponseEntity<EmployeeListResponse>>{
+public class ListValidator implements Function<List<EmployeeDTO>, ResponseEntity<EmployeeListResponse>> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ListValidator.class);
 
     @Override
     public ResponseEntity<EmployeeListResponse> apply(List<EmployeeDTO> list) {
-        if(!list.isEmpty()){
+        if (!list.isEmpty()) {
             LOGGER.info("List of {} employees was obtained", list.size());
             return ResponseEntity.ok(new EmployeeListResponse(list));
         }

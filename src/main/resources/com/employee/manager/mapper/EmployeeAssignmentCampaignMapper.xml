@@ -4,13 +4,14 @@
 
 <mapper namespace="com.employee.manager.mapper.EmployeeAssignmentCampaignMapper">
 
-    <select id="obtainEmployeeAssignmentCampaign" resultType="com.employee.manager.service.http.EmployeeAssignmentCampaignResponse">
-		SELECT DISTINCT E.ID, E.NAME, E.LASTNAME, E.DNI
-		FROM EMPLOYEES E
-		JOIN TEAM_EMPLOYEES TE ON TE.ID_EMPLOYEE = E.ID
-		WHERE TE.ID_CAMPAIGN = #{request.idCampaign}
-		AND E.ID_TYPE_EMPLOYEE = #{request.idType}
-AND TE.FINAL_DATE IS NULL
-	</select>
+    <select id="obtainEmployeeAssignmentCampaign"
+            resultType="com.employee.manager.service.http.EmployeeAssignmentCampaignResponse">
+        SELECT DISTINCT E.ID, E.NAME, E.LASTNAME, E.DNI
+        FROM EMPLOYEES E
+        JOIN TEAM_EMPLOYEES TE ON TE.ID_EMPLOYEE = E.ID
+        WHERE TE.ID_CAMPAIGN = #{request.idCampaign}
+        AND E.ID_TYPE_EMPLOYEE = #{request.idType}
+        AND TE.FINAL_DATE IS NULL
+    </select>
 
 </mapper>

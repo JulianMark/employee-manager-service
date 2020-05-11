@@ -42,13 +42,13 @@ class EmployeesWithoutAssignmentManagerServiceTest {
     private ManagerService sut;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
     @DisplayName("When obtainEmployeeList is empty. Should return 204 (No Content)")
-    public void obtainEmployeeListWithoutAssignment_EmployeeListIsEmpty_ReturnsNoContent(){
+    public void obtainEmployeeListWithoutAssignment_EmployeeListIsEmpty_ReturnsNoContent() {
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(Collections.EMPTY_LIST);
         when(listValidator.apply(any(List.class))).thenReturn(ResponseEntity.noContent().build());
@@ -61,7 +61,7 @@ class EmployeesWithoutAssignmentManagerServiceTest {
 
     @Test
     @DisplayName("When EmployeeListWithoutAssignmentMapper ThrowsException. Should return 500 (Internal Server Error)")
-    public void obtainEmployeeListWithoutAssignment_EmployeeListWithoutAssignmentMapperThrowsException_ReturnsInternalServerError(){
+    public void obtainEmployeeListWithoutAssignment_EmployeeListWithoutAssignmentMapperThrowsException_ReturnsInternalServerError() {
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(null);
 
@@ -69,12 +69,12 @@ class EmployeesWithoutAssignmentManagerServiceTest {
 
         assertThat("Status Code Response",
                 responseEntity.getStatusCode(),
-                is(HttpStatus.INTERNAL_SERVER_ERROR ));
+                is(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
     @Test
     @DisplayName("When obtainEmployeeListWithoutAssignment did not catch exceptions. Should return 200 (OK)")
-    public void obtainEmployeeListWithoutAssignment_NoExceptionCaught_ReturnsOk(){
+    public void obtainEmployeeListWithoutAssignment_NoExceptionCaught_ReturnsOk() {
         employeeDTOList = Arrays.asList(employeeA);
         when(employeeListWithoutAssignmentMapper.obtainEmployeeListWithoutAssignment())
                 .thenReturn(employeeDTOList);
@@ -85,6 +85,6 @@ class EmployeesWithoutAssignmentManagerServiceTest {
 
         assertThat("Status Code Response", responseEntity.getStatusCode(), is(HttpStatus.OK));
         assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(),
-                is (employeeDTOList.get(0).toString()));
+                is(employeeDTOList.get(0).toString()));
     }
 }

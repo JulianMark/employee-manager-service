@@ -13,5 +13,5 @@ import java.util.List;
 @Mapper
 public interface EmployeeListWithoutAssignmentMapper {
 
-    List<EmployeeDTO> obtainEmployeeListWithoutAssignment ();
+    List<EmployeeDTO> obtainEmployeeListWithoutAssignment();
 }

@@ -11,5 +11,5 @@ import org.springframework.stereotype.Component;
 @FunctionalInterface
 public interface AddMapper {
 
-    void addEmployee (@Param("addRequest") AddRequest addRequest);
+    void addEmployee(@Param("addRequest") AddRequest addRequest);
 }

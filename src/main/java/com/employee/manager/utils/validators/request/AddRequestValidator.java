@@ -7,7 +7,7 @@ import static com.employee.manager.utils.Utils.validateRequest;
 
 public class AddRequestValidator {
 
-    public static void validateAddRequest(AddRequest addRequest){
+    public static void validateAddRequest(AddRequest addRequest) {
         validateRequest(addRequest);
         validateNotNullOrEmpty(addRequest.getName());
         validateNotNullOrEmpty(addRequest.getLastName());

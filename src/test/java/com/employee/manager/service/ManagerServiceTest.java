@@ -38,22 +38,22 @@ class ManagerServiceTest {
     private CampaignEmployeesValidator CampaignEmployeesValidator;
 
     @InjectMocks
-     private ManagerService sut;
+    private ManagerService sut;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
-    static class CampaignStatusRequestArgumentsSource implements ArgumentsProvider{
+    static class CampaignStatusRequestArgumentsSource implements ArgumentsProvider {
 
         @Override
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) throws Exception {
             return Stream.of(
-                  null
-                    ,new CampaignStatusRequest(0)
-                    ,new CampaignStatusRequest(-1)
-                    ,new CampaignStatusRequest(null)
+                    null
+                    , new CampaignStatusRequest(0)
+                    , new CampaignStatusRequest(-1)
+                    , new CampaignStatusRequest(null)
             ).map(Arguments::of);
         }
     }
@@ -61,14 +61,14 @@ class ManagerServiceTest {
     @ParameterizedTest
     @ArgumentsSource(CampaignStatusRequestArgumentsSource.class)
     @DisplayName("When CampaignStatusRequest is null or id is less that or equal to zero should return 400 (Bad Request)")
-    public void obtainCampaignStatus_IsNullOrNullProperties_ReturnsBadRequest (CampaignStatusRequest request){
+    public void obtainCampaignStatus_IsNullOrNullProperties_ReturnsBadRequest(CampaignStatusRequest request) {
         ResponseEntity<CampaignEmployeesResponse> responseEntity = sut.obtainCampaignStatus(request);
-        assertThat(responseEntity.getStatusCode(), is (HttpStatus.BAD_REQUEST));
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
 
     @Test
     @DisplayName("When obtainEmployeeList is empty. Should return 204 (No Content)")
-    public void obtainCampaignStatus_EmployeeListIsEmpty_ReturnsNoContent(){
+    public void obtainCampaignStatus_EmployeeListIsEmpty_ReturnsNoContent() {
         when(campaignStatusMapper.obtainCampaignEmployees(any(CampaignStatusRequest.class)))
                 .thenReturn(Collections.EMPTY_LIST);
         when(CampaignEmployeesValidator.apply(any())).thenReturn(ResponseEntity.noContent().build());
@@ -80,7 +80,7 @@ class ManagerServiceTest {
 
     @Test
     @DisplayName("When campaignStatusMapper ThrowsException. Should return 500 (Internal Server Error)")
-    public void obtainCampaignStatus_campaignStatusMapperThrowsException_ReturnsInternalServerError(){
+    public void obtainCampaignStatus_campaignStatusMapperThrowsException_ReturnsInternalServerError() {
         when(campaignStatusMapper.obtainCampaignEmployees(any(CampaignStatusRequest.class)))
                 .thenReturn(null);
 
@@ -88,9 +88,6 @@ class ManagerServiceTest {
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.INTERNAL_SERVER_ERROR));
     }
-
-
-
 
 
 }

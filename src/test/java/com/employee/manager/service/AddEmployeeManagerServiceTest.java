@@ -29,10 +29,10 @@ import static org.mockito.Mockito.doThrow;
 class AddEmployeeManagerServiceTest {
 
     private final AddRequest VALID_ADD_REQUEST = new AddRequest("JOHN",
-                                                            "DOE",
-                                                            "314343432",
-                                                            "JOHNNY",
-                                                            "123456");
+            "DOE",
+            "314343432",
+            "JOHNNY",
+            "123456");
     @Mock
     private AddMapper addMapper;
 
@@ -40,7 +40,7 @@ class AddEmployeeManagerServiceTest {
     private ManagerService sut;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
@@ -55,7 +55,7 @@ class AddEmployeeManagerServiceTest {
 
     @Test
     @DisplayName("When addMapper throws Exception should return 500 (Internal Server Error)")
-    void addEmployee_AddMapperThrowException_ReturnsInternalServerError(){
+    void addEmployee_AddMapperThrowException_ReturnsInternalServerError() {
         doThrow(new RuntimeException()).when(addMapper).addEmployee(any());
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(VALID_ADD_REQUEST);
         assertThat("Status Code Response", responseEntity.getStatusCode(),
@@ -64,25 +64,25 @@ class AddEmployeeManagerServiceTest {
 
     @Test
     @DisplayName("When addEmployee did not catch exceptions. Should return 200 (OK)")
-    void addEmployee_NoExceptionCaught_ReturnsOK(){
+    void addEmployee_NoExceptionCaught_ReturnsOK() {
         doNothing().when(addMapper).addEmployee(any());
         ResponseEntity<QueryResponse> responseEntity = sut.addEmployee(VALID_ADD_REQUEST);
-        assertThat(responseEntity.getStatusCode(),is(HttpStatus.OK));
-        assertThat(responseEntity.getBody().getResult(),is((byte)0));
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
+        assertThat(responseEntity.getBody().getResult(), is((byte) 0));
     }
 
     static class RequestArgumentsSource implements ArgumentsProvider {
         @Override
         public Stream<? extends Arguments>
-        provideArguments(ExtensionContext extensionContext){
+        provideArguments(ExtensionContext extensionContext) {
             return Stream.of(null
-                    ,new AddRequest("","","","","")
-                    ,new AddRequest("JOHN","","","","")
-                    ,new AddRequest("JOHN","DOU","","","")
-                    ,new AddRequest("JOHN","DOU","31464981","","")
-                    ,new AddRequest("JOHN","DOU","31464981","","")
-                    ,new AddRequest("JOHN","DOU","31464981","JOHNNY",""))
-                     .map(Arguments::of);
+                    , new AddRequest("", "", "", "", "")
+                    , new AddRequest("JOHN", "", "", "", "")
+                    , new AddRequest("JOHN", "DOU", "", "", "")
+                    , new AddRequest("JOHN", "DOU", "31464981", "", "")
+                    , new AddRequest("JOHN", "DOU", "31464981", "", "")
+                    , new AddRequest("JOHN", "DOU", "31464981", "JOHNNY", ""))
+                    .map(Arguments::of);
 
         }
     }

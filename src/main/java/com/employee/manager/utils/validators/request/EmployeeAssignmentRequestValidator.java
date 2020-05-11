@@ -8,7 +8,7 @@ import static com.employee.manager.utils.Utils.validateRequest;
 
 public class EmployeeAssignmentRequestValidator {
 
-    public static void validateEmployeeAssignmentRequest(EmployeeAssignmentCampaignRequest request){
+    public static void validateEmployeeAssignmentRequest(EmployeeAssignmentCampaignRequest request) {
         validateRequest(request);
         validateIdNumber(request.getIdType());
         validateIdNumber(request.getIdCampaign());

@@ -11,9 +11,9 @@ import lombok.*;
 
 public class QueryResponse {
 
-    @ApiModelProperty(notes="Resultado de la consulta ejecutada exito = 0")
+    @ApiModelProperty(notes = "Resultado de la consulta ejecutada exito = 0")
     private Byte result;
-    @ApiModelProperty(notes="Mensaje de error, en caso de que falle el WS")
+    @ApiModelProperty(notes = "Mensaje de error, en caso de que falle el WS")
     private String errorMessage;
 
     public QueryResponse(String errorMessage) {

@@ -5,21 +5,21 @@
 <mapper namespace="com.employee.manager.mapper.EmployeeListMapper">
 
     <select id="obtainEmployeeList" resultType="com.employee.manager.model.dto.EmployeeDTO">
-		SELECT DISTINCT E.ID id,
-						E.NAME name,
-						E.LASTNAME lastName,
-						E.DNI dni,
-						E.ID_TYPE_EMPLOYEE idType,
-						C.NAME nameCampaign,
-						O.DESCRIPTION descriptionOSC
-		FROM EMPLOYEES E
-		LEFT JOIN TEAM_EMPLOYEES TE ON TE.ID_EMPLOYEE = E.ID
-		LEFT JOIN CAMPAIGNS C ON C.ID = TE.ID_CAMPAIGN
-		LEFT JOIN OSC O ON O.ID = C.ID_OSC
+        SELECT DISTINCT E.ID id,
+        E.NAME name,
+        E.LASTNAME lastName,
+        E.DNI dni,
+        E.ID_TYPE_EMPLOYEE idType,
+        C.NAME nameCampaign,
+        O.DESCRIPTION descriptionOSC
+        FROM EMPLOYEES E
+        LEFT JOIN TEAM_EMPLOYEES TE ON TE.ID_EMPLOYEE = E.ID
+        LEFT JOIN CAMPAIGNS C ON C.ID = TE.ID_CAMPAIGN
+        LEFT JOIN OSC O ON O.ID = C.ID_OSC
         WHERE TE.FINAL_DATE IS NULL
         AND (E.NAME LIKE '%'||#{request.param}||'%'
-        	OR E.LASTNAME LIKE '%'||#{request.param}||'%'
-        	OR E.DNI LIKE '%'||#{request.param}||'%')
-	</select>
+        OR E.LASTNAME LIKE '%'||#{request.param}||'%'
+        OR E.DNI LIKE '%'||#{request.param}||'%')
+    </select>
 
 </mapper>

@@ -19,14 +19,14 @@ class EmployeeAssignmentValidatorTest {
     private EmployeeAssignmentValidator sut;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void obtainList_EmployeeListIsNotEmpty_ReturnsOK (){
+    public void obtainList_EmployeeListIsNotEmpty_ReturnsOK() {
         EmployeeAssignmentCampaignResponse response = new EmployeeAssignmentCampaignResponse(
-                1,"JUAN","PEREZ","31675589",null);
+                1, "JUAN", "PEREZ", "31675589", null);
 
         ResponseEntity<EmployeeAssignmentCampaignResponse> responseEntity = sut.apply(response);
 

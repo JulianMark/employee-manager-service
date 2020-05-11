@@ -12,9 +12,9 @@ import java.util.List;
 @NoArgsConstructor
 public class CampaignEmployeesResponse {
 
-    @ApiModelProperty(notes="Resultado de la consulta ejecutada exito = lista de empleados")
+    @ApiModelProperty(notes = "Resultado de la consulta ejecutada exito = lista de empleados")
     private List employeeList;
-    @ApiModelProperty(notes="Resultado de la consulta ejecutada exito = mensaje de error")
+    @ApiModelProperty(notes = "Resultado de la consulta ejecutada exito = mensaje de error")
     private String errorMessage;
 
     public CampaignEmployeesResponse(String errorMessage) {

@@ -23,11 +23,13 @@ class ListValidatorTest {
     private ListValidator sut;
 
     @BeforeEach
-    public void setUp(){ MockitoAnnotations.initMocks(this); }
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     @DisplayName("When the method receives a list is not empty should returns 200")
-    public void obtainList_EmployeeListIsNotEmpty_ReturnsOK (){
+    public void obtainList_EmployeeListIsNotEmpty_ReturnsOK() {
         EmployeeDTO validEmployeeDTO = new EmployeeDTO(1, "JOHN", "DOU", "31252456", 1);
         List<EmployeeDTO> validList = Arrays.asList(validEmployeeDTO);
 
@@ -35,12 +37,12 @@ class ListValidatorTest {
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
         assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(), is(validList.get(0).toString()));
-        assertThat(responseEntity.getBody().getEmployeeList().size(), is (validList.size()));
+        assertThat(responseEntity.getBody().getEmployeeList().size(), is(validList.size()));
     }
 
     @Test
     @DisplayName("When the method receives a empty list should returns 204")
-    public void obtainList_EmployeeListIsEmpty_ReturnsNoContent(){
+    public void obtainList_EmployeeListIsEmpty_ReturnsNoContent() {
 
         ResponseEntity<EmployeeListResponse> responseEntity = sut.apply(Collections.EMPTY_LIST);
 

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.function.Function;
 
 @Component
-public class CampaignEmployeesValidator implements Function<List<EmployeeCampaignDTO>, ResponseEntity<CampaignEmployeesResponse>>{
+public class CampaignEmployeesValidator implements Function<List<EmployeeCampaignDTO>, ResponseEntity<CampaignEmployeesResponse>> {
 
     private final Function<List<EmployeeCampaignDTO>, List<EmployeeCampaign>> campaignEmployeesBuilder;
 
@@ -23,7 +23,7 @@ public class CampaignEmployeesValidator implements Function<List<EmployeeCampaig
 
     @Override
     public ResponseEntity<CampaignEmployeesResponse> apply(List<EmployeeCampaignDTO> employeeCampaignDTOS) {
-        if (!employeeCampaignDTOS.isEmpty()){
+        if (!employeeCampaignDTOS.isEmpty()) {
             List<EmployeeCampaign> listResponse = campaignEmployeesBuilder.apply(employeeCampaignDTOS);
             return ResponseEntity.ok(new CampaignEmployeesResponse(listResponse));
         }

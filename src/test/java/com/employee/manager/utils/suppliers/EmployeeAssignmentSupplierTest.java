@@ -18,7 +18,7 @@ class EmployeeAssignmentSupplierTest {
     private EmployeeAssignmentSupplier sut;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 

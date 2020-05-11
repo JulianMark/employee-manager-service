@@ -10,6 +10,6 @@ import lombok.*;
 @NoArgsConstructor
 
 public class CampaignStatusRequest {
-    @ApiModelProperty(notes="Numero de ID de campaña a consultar", required = true, example = "1")
+    @ApiModelProperty(notes = "Numero de ID de campaña a consultar", required = true, example = "1")
     private Integer idCampaign;
 }

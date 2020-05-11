@@ -35,17 +35,19 @@ class CampaignEmployeesValidatorTest {
     private CampaignEmployeesValidator sut;
 
     @BeforeEach
-    public void setUp(){ MockitoAnnotations.initMocks(this); }
+    public void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     @Test
     @DisplayName("When the method receives a list is not empty should returns 200")
-    public void CampaignEmployeesValidator_ReceivesNotEmptyList_ReturnsOk () {
-        EmployeeCampaignDTO validEmployeeCampaignDTO = new EmployeeCampaignDTO(1,"JOHN", "DOU",
-                2f, 400f,1f,6f,2f,"","");
+    public void CampaignEmployeesValidator_ReceivesNotEmptyList_ReturnsOk() {
+        EmployeeCampaignDTO validEmployeeCampaignDTO = new EmployeeCampaignDTO(1, "JOHN", "DOU",
+                2f, 400f, 1f, 6f, 2f, "", "");
         List<EmployeeCampaignDTO> validList = Arrays.asList(validEmployeeCampaignDTO);
-        EmployeeCampaign validEmployeeCampaign = new EmployeeCampaign(1,"JOHN", "DOU",
-                2f, 400f,6f,2f,0f,
-                0f,0.5f,"","");
+        EmployeeCampaign validEmployeeCampaign = new EmployeeCampaign(1, "JOHN", "DOU",
+                2f, 400f, 6f, 2f, 0f,
+                0f, 0.5f, "", "");
         List<EmployeeCampaign> employeesCampaign = Arrays.asList(validEmployeeCampaign);
         EmployeeCampaign employeeCampaign = employeeCampaignBuilder.apply(validEmployeeCampaignDTO);
         when(employeeCampaignBuilder.apply(validEmployeeCampaignDTO)).thenReturn(employeeCampaign);
@@ -55,12 +57,12 @@ class CampaignEmployeesValidatorTest {
 
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
         assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(),
-                is (employeesCampaign.get(0).toString()));
+                is(employeesCampaign.get(0).toString()));
     }
 
     @Test
     @DisplayName("When the method receives a empty list should returns 204")
-    public void CampaignEmployeesValidator_ReceivesEmptyList_ReturnsNoContent () {
+    public void CampaignEmployeesValidator_ReceivesEmptyList_ReturnsNoContent() {
         List<EmployeeCampaignDTO> emptyList = Collections.EMPTY_LIST;
 
         ResponseEntity<CampaignEmployeesResponse> responseEntity = sut.apply(emptyList);

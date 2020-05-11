@@ -21,10 +21,10 @@ public class CampaignEmployeesBuilder implements Function<List<EmployeeCampaignD
 
     @Override
     public List<EmployeeCampaign> apply(List<EmployeeCampaignDTO> employeeListCampaignDTO) {
-         return employeeListCampaignDTO
+        return employeeListCampaignDTO
                 .stream()
-                 .filter(employeeCampaignDTO -> (employeeCampaignDTO.getName() != null
-                         && employeeCampaignDTO.getLastName() != null))
+                .filter(employeeCampaignDTO -> (employeeCampaignDTO.getName() != null
+                        && employeeCampaignDTO.getLastName() != null))
                 .map(employeeCampaignBuilder)
                 .collect(Collectors.toList());
     }

@@ -29,7 +29,7 @@ import static org.mockito.Mockito.doThrow;
 @DisplayName("Assign type employee manager service")
 class AssignTypeManagerServiceTest {
 
-    private final AssignTypeRequest VALID_ASSIGN_TYPE_REQUEST = new AssignTypeRequest(1,1);
+    private final AssignTypeRequest VALID_ASSIGN_TYPE_REQUEST = new AssignTypeRequest(1, 1);
 
     @Mock
     private AssignTypeMapper assignTypeMapper;
@@ -38,7 +38,9 @@ class AssignTypeManagerServiceTest {
     private ManagerService sut;
 
     @BeforeEach
-    void setUp(){ MockitoAnnotations.initMocks(this); }
+    void setUp() {
+        MockitoAnnotations.initMocks(this);
+    }
 
     static class AssignTypeRequestArgumentsSource implements ArgumentsProvider {
 
@@ -46,12 +48,12 @@ class AssignTypeManagerServiceTest {
         public Stream<? extends Arguments> provideArguments(ExtensionContext extensionContext) {
             return Stream.of(
                     null
-                    ,new AssignTypeRequest(null,1)
-                    ,new AssignTypeRequest(1,null)
-                    ,new AssignTypeRequest(0,1)
-                    ,new AssignTypeRequest(1,0)
-                    ,new AssignTypeRequest(-1,1)
-                    ,new AssignTypeRequest(1,-1)
+                    , new AssignTypeRequest(null, 1)
+                    , new AssignTypeRequest(1, null)
+                    , new AssignTypeRequest(0, 1)
+                    , new AssignTypeRequest(1, 0)
+                    , new AssignTypeRequest(-1, 1)
+                    , new AssignTypeRequest(1, -1)
             ).map(Arguments::of);
         }
     }
@@ -59,7 +61,7 @@ class AssignTypeManagerServiceTest {
     @ParameterizedTest
     @ArgumentsSource(AssignTypeRequestArgumentsSource.class)
     @DisplayName("When assign type request is null, or param throw illegal exceptions should return 400 (Bad Request)")
-    void assignEmployee_RequestIsNullOrParamThrowsExceptions_ReturnsBadRequest(AssignTypeRequest request){
+    void assignEmployee_RequestIsNullOrParamThrowsExceptions_ReturnsBadRequest(AssignTypeRequest request) {
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(request);
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.BAD_REQUEST));
@@ -67,7 +69,7 @@ class AssignTypeManagerServiceTest {
 
     @Test
     @DisplayName("When assignTypeMapper throws Exception should return 500 (Internal Server Error)")
-    void assignEmployee_AssignTypeMapperThrowException_ReturnsInternalServerError(){
+    void assignEmployee_AssignTypeMapperThrowException_ReturnsInternalServerError() {
         doThrow(new RuntimeException()).when(assignTypeMapper).assignType(any());
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(VALID_ASSIGN_TYPE_REQUEST);
         assertThat("Status Code Response", responseEntity.getStatusCode(),
@@ -76,10 +78,10 @@ class AssignTypeManagerServiceTest {
 
     @Test
     @DisplayName("When assignEmployee did not catch exceptions. Should return 200 (OK)")
-    void assignEmployee_NoExceptionCaught_ReturnsOK(){
+    void assignEmployee_NoExceptionCaught_ReturnsOK() {
         doNothing().when(assignTypeMapper).assignType(any());
         ResponseEntity<QueryResponse> responseEntity = sut.assignTypeEmployee(VALID_ASSIGN_TYPE_REQUEST);
-        assertThat(responseEntity.getStatusCode(),is(HttpStatus.OK));
-        assertThat(responseEntity.getBody().getResult(),is((byte)0));
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
+        assertThat(responseEntity.getBody().getResult(), is((byte) 0));
     }
 }

@@ -46,13 +46,13 @@ class SearchEmployeeServiceTest {
     private ManagerService sut;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
     @DisplayName("When searchRequest is null. Should return 400 (Bad Request)")
-    public void obtainEmployeeList_SearchRequestIsNull_ReturnsBadRequest(){
+    public void obtainEmployeeList_SearchRequestIsNull_ReturnsBadRequest() {
         ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeList(null);
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
     }
@@ -73,18 +73,18 @@ class SearchEmployeeServiceTest {
 
     @Test
     @DisplayName("When EmployeeListMapper ThrowsException. Should return 500 (Internal Server Error)")
-    public void searchEmployee_searchEmployeeThrowsException_ReturnsInternalServerError(){
+    public void searchEmployee_searchEmployeeThrowsException_ReturnsInternalServerError() {
         when(employeeListMapper.obtainEmployeeList(any(SearchRequest.class))).thenReturn(null);
 
         ResponseEntity<EmployeeListResponse> responseEntity = sut.obtainEmployeeList(VALID_SEARCH_REQUEST);
 
-        assertThat("Status Code Response",responseEntity.getStatusCode(),
-                is(HttpStatus.INTERNAL_SERVER_ERROR ));
+        assertThat("Status Code Response", responseEntity.getStatusCode(),
+                is(HttpStatus.INTERNAL_SERVER_ERROR));
     }
 
     @Test
     @DisplayName("When searchEmployee did not catch Exceptions. Should return 200 (OK)")
-    public void searchEmployee_NoExceptionCaught_ReturnsOk(){
+    public void searchEmployee_NoExceptionCaught_ReturnsOk() {
         employeeDTOList = Arrays.asList(employeeA);
         when(employeeListMapper.obtainEmployeeList(any(SearchRequest.class)))
                 .thenReturn(employeeDTOList);
@@ -95,7 +95,7 @@ class SearchEmployeeServiceTest {
 
         assertThat("Status Code Response", responseEntity.getStatusCode(),
                 is(HttpStatus.OK));
-          assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(),
+        assertThat(responseEntity.getBody().getEmployeeList().get(0).toString(),
                 is(employeeDTOList.get(0).toString()));
     }
 }
